@@ -16,10 +16,15 @@ class Session(models.Model):
     start_time = models.TimeField()
     availability = models.IntegerField()
     technology = models.CharField(max_length=32)
+    room = models.IntegerField()
+    purchase_link = models.CharField(max_length=256) #TODO: max length
     movie = models.ForeignKey(
         'Movie',
         on_delete=models.CASCADE,
     )
+    cinema = models.ForeignKey(
+    	'Cinema',
+    	on_delete=models.CASCADE)
 
 class Movie(models.Model):
     """ Movie
@@ -31,7 +36,7 @@ class Movie(models.Model):
     synopsis = models.TextField()
     length = models.IntegerField()
     trailer_url = models.CharField(max_length=128) #TODO: max length
-    banner = models.BinaryField()
+    banner_url = models.CharField(max_length=128) #TODO: max length
     released = models.BooleanField()
     age_rating = models.ForeignKey(
         'AgeRating',

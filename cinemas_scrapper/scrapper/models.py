@@ -4,8 +4,9 @@ class Cinema(models.Model):
     """ Cinema
     """
     coordinates = models.CharField(max_length=32, primary_key=True)
-    name = models.CharField(max_length=32)
-    cidade = models.CharField(max_length=32)
+    alt_name = models.CharField(max_length=64)
+    name = models.CharField(max_length=64)
+    city = models.CharField(max_length=32)
 
 
 class Session(models.Model):

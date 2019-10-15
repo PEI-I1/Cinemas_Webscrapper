@@ -1,0 +1,272 @@
+[
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.7234887,-9.1639341",
+        "fields": {
+            "alt_name":"",
+            "name": "Amoreiras",
+            "city": "Lisboa"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.6945077,-8.9439159",
+        "fields": {
+            "alt_name":"Alegro Montijo",
+            "name": "Alegro Montijo",
+            "city": "Montijo"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.6600947,-9.177393",
+        "fields": {
+            "alt_name":"Almada Forum",
+            "name": "Almada Forum",
+            "city": "Almada"
+        }
+    }, 
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.7818969,-9.1942263",
+        "fields": {
+            "alt_name":"Strada Outlet",
+            "name": "Odivelas Strada",
+            "city": "Odivelas"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.7053291,-9.3039872",
+        "fields": {
+            "alt_name":"Oeiras Parque",
+            "name": "Oeiras Parque",
+            "city": "Oeiras"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.7611467,-9.1615891",
+        "fields": {
+            "alt_name":"Centro Comercial Alvaláxia",
+            "name": "Alvaláxia",
+            "city": "Lisboa"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "39.1015359,-9.2550299",
+        "fields": {
+            "alt_name":"Arena Shopping",
+            "name": "Torres Vedras",
+            "city": "Torres Vedras"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.7628392,-9.0848075",
+        "fields": {
+            "alt_name":"Centro Vasco da Gama",
+            "name": "Vasco da Gama",
+            "city": "Lisboa"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.7390315,-9.4015804",
+        "fields": {
+            "alt_name":"CascaiShopping",
+            "name": "CascaiShopping",
+            "city": "Cascais"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.7100466,-9.230491,",
+        "fields": {
+            "alt_name":"Dolce Vita Miraflores",
+            "name": "Dolce Vita Miraflores",
+            "city": "Algés"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "41.1637774,-8.5863914",
+        "fields": {
+            "alt_name":"Alameda Shop & Spot",
+            "name": "Alameda Shop e Spot",
+            "city": "Porto"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "41.2839476,-8.3626587",
+        "fields": {
+            "alt_name":"Centro Comercial Ferrara Plaza",
+            "name": "Ferrara Plaza",
+            "city": "Carvalhosa"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "41.118363,-8.6235849",
+        "fields": {
+            "alt_name":"GaiaShopping",
+            "name": "Gaia Shopping",
+            "city": "Vila Nova de Gaia"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "41.2198153,-8.5637159",
+        "fields": {
+            "alt_name":"MaiaShopping",
+            "name": "Maia Shopping",
+            "city": "Águas Santas"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "41.2090041,-8.6895187",
+        "fields": {
+            "alt_name":"Mar Shopping",
+            "name": "Mar Matosinhos",
+            "city": "Matosinhos"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "41.1808164,-8.656765",
+        "fields": {
+            "alt_name":"NorteShopping",
+            "name": "NorteShopping",
+            "city": "Porto"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "41.1748915,-8.5678735",
+        "fields": {
+            "alt_name":"Parque Nascente Shopping",
+            "name": "Parque Nascente",
+            "city": "Porto"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "40.2121902,-8.4441584",
+        "fields": {
+            "alt_name":"Shopping Forum Coimbra",
+            "name": "Forum Coimbra",
+            "city": "Coimbra"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "40.6618237,-7.9161549",
+        "fields": {
+            "alt_name":"Forum Viseu",
+            "name": "Forum Viseu",
+            "city": "Viseu"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "40.1659799,-8.8624673",
+        "fields": {
+            "alt_name":"Centro Comercial Foz Plaza",
+            "name": "Foz Plaza",
+            "city": "Figueira da Foz"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "40.6269845,-8.6475724",
+        "fields": {
+            "alt_name": "Glicínias Plaza Shopping Center",
+            "name": "Glicinias",
+            "city": "Aveiro"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "40.6437879,-7.9134071",
+        "fields": {
+            "alt_name": "Palácio do Gelo",            
+            "name": "Palácio do Gelo",
+            "city": "Viseu"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "40.2046885,-8.4097995",
+        "fields": {
+            "alt_name": "Alma Shopping",
+            "name": "Alma Shopping",
+            "city": "Coimbra"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "41.5577725,-8.4080899",
+        "fields": {
+            "alt_name": "Shopping Braga Parque",
+            "name": "Braga Parque",
+            "city": "Braga"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "41.2967671,-7.7365003",
+        "fields": {
+            "alt_name": "Nosso Shopping",
+            "name": "Nosso Shopping",
+            "city": "Vila Real"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "37.1307958,-7.6390544",
+        "fields": {
+            "alt_name" : "Tavira Gran-Plaza",
+            "name": "Tavira Gran-Plaza",
+            "city": "Tavira"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "37.0288821,-7.946881",
+        "fields": {
+            "alt_name": "Forum Algarve",
+            "name": "Forum Algarve",
+            "city": "Faro"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "37.0988045,-8.0001799",
+        "fields": {
+            "alt_name": "MAR Shopping Algarve",
+            "name": "Mar Shopping Algarve",
+            "city": "Almancil"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "38.54896,-7.907121",
+        "fields": {
+            "alt_name": "Evora Plaza",
+            "name": "Evora Plaza",
+            "city": "Evora"
+        }
+    },
+    {
+        "model": "scrapper.Cinema",
+        "pk": "32.6359473,-16.9453329",
+        "fields": {
+            "alt_name": "Forum Madeira",
+            "name": "Forum Madeira",
+            "city": "Funchal"
+        }
+    }
+]

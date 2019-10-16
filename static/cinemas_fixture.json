@@ -270,8 +270,59 @@
         }
     },
     {
+        "model": "scrapper.Cinema",
+        "pk": "38.755124,-9.187056",
+        "fields": {
+            "alt_name": "Colombo",
+            "name": "Colombo",
+            "city": "Lisboa"
+        }
+    },
+    {
         "model": "scrapper.AgeRating",
         "pk": 4,
+        "fields": {
+        }
+    },
+    {
+        "model": "scrapper.AgeRating",
+        "pk": 6,
+        "fields": {
+        }
+    },
+    {
+        "model": "scrapper.AgeRating",
+        "pk": 8,
+        "fields": {
+        }
+    },
+    {
+        "model": "scrapper.AgeRating",
+        "pk": 10,
+        "fields": {
+        }
+    },
+    {
+        "model": "scrapper.AgeRating",
+        "pk": 12,
+        "fields": {
+        }
+    },
+    {
+        "model": "scrapper.AgeRating",
+        "pk": 14,
+        "fields": {
+        }
+    },
+    {
+        "model": "scrapper.AgeRating",
+        "pk": 16,
+        "fields": {
+        }
+    },
+    {
+        "model": "scrapper.AgeRating",
+        "pk": 18,
         "fields": {
         }
     },
@@ -279,7 +330,133 @@
         "model": "scrapper.Genre",
         "pk": 0,
         "fields": {
-            "name": "Adventure"
+            "name": "Ação"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 1,
+        "fields": {
+            "name": "Animação"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 2,
+        "fields": {
+            "name": "Aventura"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 3,
+        "fields": {
+            "name": "Bailado"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 4,
+        "fields": {
+            "name": "Biografia"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 5,
+        "fields": {
+            "name": "Comédia"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 6,
+        "fields": {
+            "name": "Documentário"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 7,
+        "fields": {
+            "name": "Drama"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 8,
+        "fields": {
+            "name": "Épico"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 9,
+        "fields": {
+            "name": "Familiar"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 10,
+        "fields": {
+            "name": "Ficção"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 11,
+        "fields": {
+            "name": "Infantil"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 12,
+        "fields": {
+            "name": "Mistério"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 13,
+        "fields": {
+            "name": "Musical"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 14,
+        "fields": {
+            "name": "Promoção"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 15,
+        "fields": {
+            "name": "Romance"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 16,
+        "fields": {
+            "name": "Suspense"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 17,
+        "fields": {
+            "name": "Terror"
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 18,
+        "fields": {
+            "name": "Thriller"
         }
     }
 ]

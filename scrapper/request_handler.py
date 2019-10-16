@@ -6,6 +6,10 @@ def updateMovieSessions():
     """ Periodic task to fetch the latest session and movie info
     """
     movie_dump = getMovies()
+    debuts_dump = getNextDebuts()
+
+    for debut in debuts_dump:
+        movie_dump.append(debut)
 
     for movie in movie_dump:
         

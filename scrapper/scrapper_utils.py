@@ -38,7 +38,11 @@ def getMovie(movie_link, debut):
         
         movie_header = details.find('div', {'class': 'info'})
         title = movie_header.find('h1').get_text().strip()
-        age = int(re.sub(r'M', '', movie_header.find('h2', {'class': 'subheadline'}).get_text().strip()))
+        age = re.sub(r'M', '', movie_header.find('h2', {'class': 'subheadline'}).get_text().strip())
+        if age.isdigit():
+            age = int(age)
+        else:
+            age = 18
 
         general_descriptions = details.find('section', {'class': 'description'}).find_all('p')
         d = []

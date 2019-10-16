@@ -19,6 +19,4 @@ The API provided by this service must allow:
 * ...
 
 ## Database ER diagram
-<p align="center">
-  <img src="https://github.com/PEI-I1/Cinemas_Webscrapper/blob/master/Cinemas_NOS_DB_EN.png"/>
-</p>
+![Database model](static/doc/Cinemas_NOS_DB_EN.png)

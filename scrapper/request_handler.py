@@ -1,16 +1,18 @@
-def next_sessions(coordinates):
-    """ List upcoming movie sessions taking place near the user
-    :param: coordinates user coordinates
-    """
-    time = time.now()
-    
 from django.conf import settings
+from .models import *
 import requests
 import re
 from bs4 import BeautifulSoup
 import json
 
 
+
+def next_sessions(coordinates):
+    """ List upcoming movie sessions taking place near the user
+    :param: coordinates user coordinates
+    """
+    time = time.now()
+    
 def getMovies():
     r = requests.get(settings.MOVIES_LINK)
     movies_objects = []
@@ -49,18 +51,17 @@ def getMovie(movie_link, debut):
 
         general_descriptions = details.find('section', {'class': 'description'}).find_all('p')
         d = []
-        if len(general_descriptions) < 10:
-            array = [0, 2, 3, 4, 8]
-        else:
-            array = [0, 2, 3, 4, 8, 9] # for movies that specify technology
-        for detail in array:
-            t = general_descriptions[detail].get_text().strip()
-            d.append(t)
-        genre = re.sub(r'[^:]*:\s', '', d[0])
-        original_title = re.sub(r'[^:]*:\s', '', d[1])
-        producer = re.sub(r'[^:]*:\s', '', d[2])
-        actors = re.sub(r'[^:]*:\s', '', d[3])
-        duration = re.sub(r'[^:]*:\s', '', d[4]) if len(general_descriptions) < 10 or 'Duração' in d[4] else re.sub(r'[^:]*:\s', '', d[5])
+
+        props = {r'Género': '',
+                 r'Título Original': '',
+                 r'Realizador' : '',
+                 r'Actores' : '',
+                 r'Duração (minutos)': 0}
+
+        for detail in general_descriptions:
+            prop, val = tuple(detail.get_text().strip().split(':', 1))
+            if prop in props:
+                props[prop] = val
 
         synopsis = details.find('section', {'class': 'sinopse'}).find('div', {'class': 'ms-rtestate-field'}).get_text()
         synopsis = re.sub(r'\s+', ' ', synopsis)
@@ -68,20 +69,23 @@ def getMovie(movie_link, debut):
         schedule_html = soup.find('section', {'class': 'schedule'}).find_all('section', {'class': 'table is-hidden display-none'})
         
         # Too heavy for testing every time
-        #if not debut: 
-        #    schedule = getSchedule(schedule_html)
+        if not debut: 
+            schedule = getSchedule(schedule_html)
+        else:
+            schedule = []
 
         movie_object = {
             'title': title,
-            'original_title': original_title,
-            'genre': genre,
-            'producer': producer,
-            'actors': actors,
-            'duration': duration,
+            'original_title': props[r'Título Original'],
+            'genre': props[r'Género'],
+            'producer': props[r'Realizador'],
+            'actors': props[r'Actores'],
+            'duration': props[r'Duração (minutos)'],
             'synopsis': synopsis,
             'trailer_url': trailer,
             'banner_url': banner,
-            'debut': debut
+            'debut': debut,
+            'sessions': schedule
         }
 
         return movie_object
@@ -107,32 +111,22 @@ def getSchedule(schedule_html):
                 hours = re.sub(r'\s+.*', '', session.get_text().strip())
                 link = session['href']
 
-                r = requests.get(link)
-                if (r.status_code == 200):
-                    soup = BeautifulSoup(r.text, 'html5lib')
-                    available_seats = soup.find('tfoot').find('div', {'class': 'right'}).find('span', {'class': 'number'}).get_text()
-                    print('\t' + hours + '  ' + link + '  ' + available_seats + ' lugares')
-
-                    session_object = {
+                session_object = {
                         'cinema': cinema,
                         'room': re.sub(r'[^\d]', '', room),
                         'date': day,
                         'hours': hours,
                         'purchase_link': link,
-                        'availability': available_seats
-                    }
-
-                    sessions_objects.append(session_object)
-                
-                else:
-                    print("Não foi possível obter o número de lugares disponíveis para a sessão")
+                        'availability': 0 #available_seats
+                }
+                sessions_objects.append(session_object)                
+                # getSessionAvailability(link) TODO: move me
 
     for s in sessions_objects:
         print(s)
     return sessions_objects
 
 def getNextDebuts():
-
     r = requests.get(settings.NOS_CINEMAS_URL)
     movies_objects = []
     if (r.status_code == 200):
@@ -148,3 +142,38 @@ def getNextDebuts():
         print("Não foi possível obter a lista de próximas estreias")
 
     return movies_objects
+
+
+#FIXME
+def getSessionAvailability(link):
+    """ Get number of available seats for a given session
+    """
+    r = requests.get(link)
+    if (r.status_code == 200):
+        soup = BeautifulSoup(r.text, 'html5lib')
+        available_seats = soup.find('tfoot').find('div', {'class': 'right'}).find('span', {'class': 'number'}).get_text()
+        print('\t' + hours + '  ' + link + '  ' + available_seats + ' lugares')
+    else:
+        print("Não foi possível obter o número de lugares disponíveis para a sessão")
+
+def updateMovieSessions():
+    """ Periodic task to fetch the latest session and movie info
+    """
+    movie_dump = getMovies()
+
+    for movie in movie_dump:
+        movie_entry = Movie(
+            original_title = movie['original_title'],
+            title_pt = movie['title'],
+            producter = movie['producer'],
+            cast = movie['actors'],
+            synopsis = movie['synopsis'],
+            length = movie['duration'],
+            trailer_url = movie['trailer_url'],
+            banner_url = movie['banner_url'],
+            released = movie['debut'],
+            age_rating = 0,
+            genre = 0)
+        #TODO: consistency checks
+        #movie_entry.save()
+        #TODO: save associated sessions

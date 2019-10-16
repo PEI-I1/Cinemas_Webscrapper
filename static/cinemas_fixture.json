@@ -268,5 +268,18 @@
             "name": "Forum Madeira",
             "city": "Funchal"
         }
+    },
+    {
+        "model": "scrapper.AgeRating",
+        "pk": 4,
+        "fields": {
+        }
+    },
+    {
+        "model": "scrapper.Genre",
+        "pk": 0,
+        "fields": {
+            "name": "Adventure"
+        }
     }
 ]

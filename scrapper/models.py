@@ -35,8 +35,8 @@ class Movie(models.Model):
     cast = models.TextField()
     synopsis = models.TextField()
     length = models.IntegerField()
-    trailer_url = models.CharField(max_length=128) #TODO: max length
-    banner_url = models.CharField(max_length=128) #TODO: max length
+    trailer_url = models.CharField(max_length=128)
+    banner_url = models.CharField(max_length=128)
     released = models.BooleanField()
     age_rating = models.ForeignKey(
         'AgeRating',
@@ -56,4 +56,4 @@ class AgeRating(models.Model):
 class Genre(models.Model):
     """ Movie genre
     """
-    name = models.CharField(max_length=32, primary_key=True)
+    name = models.CharField(max_length=32)

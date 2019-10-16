@@ -3,10 +3,10 @@
 ## Functional Requirements
 
 The API provided by this service must allow:
-* retrieve list of movies/sessions based on current date and location
-* retrieve next movies based on location
-* get movie suggestions based on age restrictions
-* search for movies based on:
+* Retrieve list of movies/sessions based on current date and location
+* Retrieve next movies based on location
+* Get movie suggestions based on age restrictions
+* Search for movies based on:
     * Genre
     * Producer
     * Cast

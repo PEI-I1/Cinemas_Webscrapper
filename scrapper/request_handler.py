@@ -160,20 +160,21 @@ def updateMovieSessions():
     """ Periodic task to fetch the latest session and movie info
     """
     movie_dump = getMovies()
-
+    agerating = AgeRating.objects.all().filter(age=4)[0]
+    genre = Genre.objects.all().filter(name="Adventure")[0]
     for movie in movie_dump:
         movie_entry = Movie(
             original_title = movie['original_title'],
             title_pt = movie['title'],
-            producter = movie['producer'],
+            producer = movie['producer'],
             cast = movie['actors'],
             synopsis = movie['synopsis'],
             length = movie['duration'],
             trailer_url = movie['trailer_url'],
             banner_url = movie['banner_url'],
             released = movie['debut'],
-            age_rating = 0,
-            genre = 0)
+            age_rating = agerating,
+            genre = genre)
         #TODO: consistency checks
-        #movie_entry.save()
+        movie_entry.save()
         #TODO: save associated sessions

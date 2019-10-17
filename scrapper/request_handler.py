@@ -1,6 +1,8 @@
 from .models import *
-from .scrapper_utils import getMovies, getNextDebuts
-from datetime import datetime
+from .scrapper_utils import getMovies, getNextDebuts, distance
+import time
+from datetime import datetime, date, time, timedelta
+from django.db.models import Q
 
 def updateMovieSessions():
     """ Periodic task to fetch the latest session and movie info
@@ -38,7 +40,7 @@ def updateMovieSessions():
             length = movie['duration'],
             trailer_url = movie['trailer_url'],
             banner_url = movie['banner_url'],
-            released = movie['debut'],
+            released = not movie['debut'],
             age_rating = age_rating,
             genre = genre
         )
@@ -66,8 +68,158 @@ def updateMovieSessions():
 
             session_entry.save()
 
-def next_sessions(coordinates):
-    """ List upcoming movie sessions taking place near the user
-    :param: coordinates user coordinates
+def next_sessions(coordinates=[],datetime=""):
+    """ List upcoming sessions taking place near the user based on current date
+    :param: coordinates in list like [41,7]
     """
-    time = time.now()
+    next_sessions_list = []
+    cinemas = Cinema.objects.all()
+    minDist = -1
+    closestCinema = {}
+    if coordinates!=[] :
+        for cinema in cinemas:
+            cinemaCoord = cinema.coordinates.strip().split(',', 1)
+            
+            dist = distance(coordinates[0],coordinates[1],float(cinemaCoord[0][:-1]),float(cinemaCoord[1]))
+            if  dist < minDist or minDist==-1 :
+                minDist=dist
+                closestCinema = cinema
+    
+    #date_time_str = '2019-10-19 00:16:27.243860'
+    #now = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S.%f')
+    now = datetime.today()
+    current_time = now.strftime("%H:%M:%S")
+    past_mid_night = False
+    if current_time[0]=='0' and int(current_time[1])<5 : # in cinema nos website past mid-night sessions are still in the previous day , so we need to subtract one day if its past mid-night
+        past_mid_night = True
+        take_one_day = timedelta(days=-1)
+        now =  now + take_one_day
+    current_date = now.strftime("%Y-%m-%d")
+
+    if coordinates!=[] :
+        sessions = Session.objects.filter(cinema=closestCinema, start_date=current_date)
+    else:
+        sessions = Session.objects.filter(start_date=current_date)
+
+    for session in sessions:
+        session_is_past_midnight = str(session.start_time)[0]=='0' and int(str(session.start_time)[1])<5
+        session_before_current_before =  not session_is_past_midnight and not past_mid_night and session.start_time > now.time() 
+        session_after_current_before =  session_is_past_midnight and not past_mid_night and True
+        session_before_current_after =  not session_is_past_midnight and past_mid_night and False 
+        session_after_current_after =  session_is_past_midnight and past_mid_night and session.start_time > now.time() 
+
+        if session_before_current_before or session_after_current_before or session_before_current_after or session_after_current_after:
+            next_sessions_list.append(session)
+    return next_sessions_list
+
+
+def next_movies(coordinates=[]):
+    """ List upcoming movies taking place near the user based on current date
+    :param: coordinates in list like [41,7]
+    """
+    next_movies_list=[]
+    next_sessions_list = next_sessions(coordinates)
+    for session in next_sessions_list:
+        next_movies_list.append(session.movie)
+    next_movies_list = list(dict.fromkeys(next_movies_list))
+    return next_movies_list
+
+    
+def next_movies_by_duration(duration,coordinates=[]):
+    """ List upcoming movies with less duration than given 
+    :param: duration given by costumer in minutes
+    :param: coordinates in list like [41,7]
+    """ 
+    next_movies_list = next_movies(coordinates)
+    movies_results = []
+    for movie in next_movies_list:
+        if movie.length<=duration :
+            movies_results.append(movie)
+    movies_results = list(dict.fromkeys(movies_results))
+    return movies_results
+    
+    
+def get_movies(genre="",producer="",cast="",synopsis="",age=18):
+    """ List upcoming movies based on genre,producer,cast,synopsis and age
+    :param: genre requested by the costumer
+    :param: producer requested by the costumer
+    :param: cast member or members requested by the costumer
+    :param: synopsis/details of the movie given by the costumer
+    :param: age limit requested by the costumer
+    """
+    movies = Movie.objects.filter(  genre__name__icontains=genre,
+                                    producer__icontains=producer,
+                                    cast__icontains=cast,
+                                    synopsis__icontains=synopsis,
+                                    age_rating_id__lte=age
+                                )
+    """
+    #prints for testing 
+    print("MOVIES-----------------------")
+    for m in movies:
+        print(m.original_title)
+    """ 
+    return movies
+def upcoming_releases():
+    """ List upcoming releases
+    """
+    movies = Movie.objects.filter( released=False)
+    movies = list(dict.fromkeys(movies))
+    return movies
+
+def available_seats(session_id):
+    """ Available seats of un specific session
+    :param: id of session
+    """
+    session = Session.objects.get(pk=session_id)
+    return session.availability
+
+def movie_details(original_title):
+    """ Movies details of un specific movie
+    :param: original_title of movie (primarykey)
+    """
+    movie = Movie.objects.get(pk=original_title)
+    return movie.synopsis
+
+def next_sessions_specific_movie(original_title,date="",time="",location=""):
+    """ List upcoming sessions taking by the given location,date and movie
+    :param: original_title of movie (primarykey)
+    :param: date given by costumer ("%yyyy-%mm-%dd")
+    :param: time given by costumer ("hh:mm:ss")
+    :param: location given by costumer (city or name of cinema)
+    """
+    sessions = Session.objects.filter(
+                                        movie__original_title__icontains=original_title,
+                                    )
+    sessions = sessions.filter( Q(cinema__name__icontains=location) | Q(cinema__alt_name__icontains=location) | Q(cinema__city__icontains=location) )
+    
+    if (date!=""): 
+        sessions= sessions.filter( start_date = date)
+    
+    if (time!=""):
+        now = datetime.strptime(time,'%H:%M:%S')
+
+        past_mid_night = str(time)[0]=='0' and int(str(time)[1])<5
+        next_sessions_list = []
+        for session in sessions:
+            session_is_past_midnight = str(session.start_time)[0]=='0' and int(str(session.start_time)[1])<5
+            session_before_current_before =  not session_is_past_midnight and not past_mid_night and session.start_time > now.time()
+            session_after_current_before =  session_is_past_midnight and not past_mid_night and True
+            session_before_current_after =  not session_is_past_midnight and past_mid_night and False 
+            session_after_current_after =  session_is_past_midnight and past_mid_night and session.start_time > now.time()
+
+            if session_before_current_before or session_after_current_before or session_before_current_after or session_after_current_after:
+                next_sessions_list.append(session)
+        sessions = next_sessions_list
+
+    """
+    #testing
+    print("LEN=" + str(len(sessions)) )
+    for s in sessions:
+        print("-------")
+        print(s.start_time)
+        print(s.start_date)
+        print("--------")
+    """
+
+    return sessions

@@ -3,6 +3,7 @@ import requests
 import re
 from bs4 import BeautifulSoup
 import json
+import math 
 
 def getMovies():
     r = requests.get(settings.MOVIES_LINK)
@@ -151,3 +152,13 @@ def getSessionAvailability(link):
         print('\t' + hours + '  ' + link + '  ' + available_seats + ' lugares')
     else:
         print("Não foi possível obter o número de lugares disponíveis para a sessão")
+
+def distance(p1X,p1Y,p2X,p2Y):
+    """ Get distance between 2 localizations based on both coordinates 
+    :param: X of first localization
+    :param: Y of first localization
+    :param: X of second localization
+    :param: T of second localization
+    """
+    dist = math.sqrt( ((p1X-p2X)**2)+((p1Y-p2Y)**2) )
+    return dist 

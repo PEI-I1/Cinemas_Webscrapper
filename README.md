@@ -5,7 +5,7 @@
 The API provided by this service must allow:
 * Retrieve list of movies/sessions based on current date and location
 * Retrieve next movies based on location
-* Get movie suggestions based on age restrictions
+* Get movie suggestions based on duration
 * Search for movies based on:
     * Genre
     * Producer

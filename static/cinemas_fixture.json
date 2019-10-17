@@ -82,7 +82,7 @@
     },
     {
         "model": "scrapper.Cinema",
-        "pk": "38.7100466,-9.230491,",
+        "pk": "38.7100466,-9.230491",
         "fields": {
             "alt_name":"Dolce Vita Miraflores",
             "name": "Dolce Vita Miraflores",

@@ -3,5 +3,8 @@ from . import views
 
 urlpatterns = [
     path('movies', views.list_movies),
-    path('test',views.test)
+    path('test1',views.test1),
+    path('test2',views.test2),
+    path('test3',views.test3),
+    path('test4',views.test3)
 ]

@@ -68,7 +68,7 @@ def updateMovieSessions():
 
             session_entry.save()
 
-def next_sessions(coordinates=[],datetime=""):
+def next_sessions(coordinates=[]):
     """ List upcoming sessions taking place near the user based on current date
     :param: coordinates in list like [41,7]
     """
@@ -80,7 +80,7 @@ def next_sessions(coordinates=[],datetime=""):
         for cinema in cinemas:
             cinemaCoord = cinema.coordinates.strip().split(',', 1)
             
-            dist = distance(coordinates[0],coordinates[1],float(cinemaCoord[0][:-1]),float(cinemaCoord[1]))
+            dist = distance(coordinates[0],coordinates[1],float(cinemaCoord[0]),float(cinemaCoord[1]))
             if  dist < minDist or minDist==-1 :
                 minDist=dist
                 closestCinema = cinema

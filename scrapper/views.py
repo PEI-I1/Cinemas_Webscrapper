@@ -47,3 +47,9 @@ def req38(request):
     """
     movies_as_json = json.dumps(request_handler.get_sessions_by_duration(date="2019-10-31", duration=300, search_term="Nascente"))
     return HttpResponse(movies_as_json, content_type='json')
+
+def req39(request):
+    """ get upcoming sessions
+    """
+    sessions_as_json = json.dumps(request_handler.next_sessions(coordinates=[41.5807204, -8.4293997]))
+    return HttpResponse(sessions_as_json, content_type='json')

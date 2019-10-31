@@ -148,40 +148,34 @@ def get_sessions_by_duration(date, duration, search_term ="", coordinates = []):
     return res
     
 
-def next_sessions(location="", coordinates=[]):
+def next_sessions(search_term="", coordinates=[]):
     """ List upcoming sessions taking place near the user based on current date
     :param: coordinates in list like [41,7]
     """
-    next_sessions_list = []
-    cinemas = Cinema.objects.all()
-    minDist = -1
-    closestCinema = {}
-    if coordinates!=[] :
-        for cinema in cinemas:
-            cinemaCoord = cinema.coordinates.strip().split(',', 1)
-            
-            dist = distance(coordinates[0],coordinates[1],float(cinemaCoord[0]),float(cinemaCoord[1]))
-            if  dist < minDist or minDist==-1 :
-                minDist=dist
-                closestCinema = cinema
+    next_sessions = []
+    cinemas = get_matching_cinemas(search_term, coordinates)
     
-    #date_time_str = '2019-10-19 00:16:27.243860'
-    #now = datetime.strptime(date_time_str, '%Y-%m-%d %H:%M:%S.%f')
     now = datetime.today()
     current_time = now.strftime("%H:%M:%S")
-    past_mid_night = False
-    if current_time[0]=='0' and int(current_time[1])<5 : # in cinema nos website past mid-night sessions are still in the previous day , so we need to subtract one day if its past mid-night
-        past_mid_night = True
-        take_one_day = timedelta(days=-1)
-        now =  now + take_one_day
+    past_mid_night = current_time[0] == '0' and int(current_time[1]) < 5
+
+    if past_mid_night: #in cinemas nos website past mid-night sessions are still in the previous day , so we need to subtract one day if its past mid-night
+        take_one_day = timedelta(days = -1)
+        now = now + take_one_day
+    
     current_date = now.strftime("%Y-%m-%d")
 
-    if coordinates!=[] :
-        sessions = Session.objects.filter(cinema=closestCinema, start_date=current_date)
-    else:
-        sessions = Session.objects.filter(start_date=current_date)
+    sessions = Session.objects.filter(cinema__in = cinemas, start_date = current_date, start_time__gte = current_time)
+    # FIX: example 01h00 is smaller than 16h00
+    
+    res = {}
+    for cinema in cinemas:
+        sessions = list(set(Session.objects.filter(cinema=cinema[0]).values_list('movie', 'start_time', 'purchase_link', flat=True)))
+        res[cinema[1]] = sessions
+    return res
+    
+    """for session in sessions:
 
-    for session in sessions:
         session_is_past_midnight = str(session.start_time)[0]=='0' and int(str(session.start_time)[1])<5
         session_before_current_before =  not session_is_past_midnight and not past_mid_night and session.start_time > now.time() 
         session_after_current_before =  session_is_past_midnight and not past_mid_night and True
@@ -190,8 +184,7 @@ def next_sessions(location="", coordinates=[]):
 
         if session_before_current_before or session_after_current_before or session_before_current_after or session_after_current_after:
             next_sessions_list.append(session)
-    return next_sessions_list
-
+    return next_sessions_list"""
 
 def next_movies(coordinates=[]):
     """ List upcoming movies taking place near the user based on current date

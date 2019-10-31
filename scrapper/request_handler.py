@@ -81,7 +81,7 @@ def closest_cinema(coordinates=[]):
             minDist=dist
             closest_cinema = cinema
 
-    return closest_cinema.id
+    return closest_cinema.coordinates
 
 def find_cinemas(search_term=""):
     cinemas = Cinema.objects.all()
@@ -103,11 +103,50 @@ def movies_of_cinemas(cinemas_coordinates):
         res[cinema[1]] = movie_titles
     return res
 
-def get_movies_by_cinema(search_term=""):
-    cinemas = find_cinemas(search_term)
+def get_movies_by_cinema(search_term="", coordinates=[]):
+    cinemas = get_matching_cinemas(search_term, coordinates)
+    print(cinemas)
     movies = movies_of_cinemas(cinemas)
-    print(movies)
     return movies
+
+def get_sessions_by_date(cinemas_coordinates, date):
+    """ Get sessions taking placing in a cinema on a given date
+    :param: cinema coordinates
+    :param: date 
+    """
+    return Session.objects.filter(start_date=date, cinema__in=cinemas_coordinates)                     
+
+
+def get_matching_cinemas(search_term="", coordinates = []):
+    """ Return the coordinates of all the matching cinemas
+    :param:
+    :param:
+    :return: list of cinema coordinates
+    """
+    if search_term:
+        cinemas = find_cinemas(search_term)
+    else:
+        cinemas = [closest_cinema(coordinates)]
+    return cinemas
+
+def get_sessions_by_duration(date, duration, search_term ="", coordinates = []):
+    """ 
+    :param: Duration limit
+    """
+    cinemas = get_matching_cinemas(search_term, coordinates)
+    movies_ud = Movie.objects.filter(length__lte=duration).values_list('original_title', 'length')
+    sessions = get_sessions_by_date(cinemas, date)
+    res = {}
+    for movie in movies_ud:
+        raw_movie_sessions = sessions.filter(movie=movie[0]).values_list('start_date', 'start_time', 'purchase_link')
+        movie_sessions = [{'Start date': str(raw_session[0]),
+                           'Start time': str(raw_session[1]),
+                           'Ticket link': raw_session[2]}
+                          for raw_session in raw_movie_sessions]
+        res[movie[0]] = {'length': movie[1], 'sessions': movie_sessions}
+
+    return res
+    
 
 def next_sessions(location="", coordinates=[]):
     """ List upcoming sessions taking place near the user based on current date

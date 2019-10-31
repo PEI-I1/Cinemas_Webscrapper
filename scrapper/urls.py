@@ -7,5 +7,6 @@ urlpatterns = [
     path('test2',views.test2),
     path('test3',views.test3),
     path('test4',views.test4),
-    path('test5',views.test5),
+    path('req37',views.req37),
+    path('req38',views.req38),
 ]

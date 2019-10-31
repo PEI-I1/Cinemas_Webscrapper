@@ -36,8 +36,14 @@ def test4(request):
     movies_as_json = serializers.serialize('json', Movie.objects.all())
     return HttpResponse(movies_as_json, content_type='json')
 
-def test5(request):
+def req37(request):
     """ get movies of cinema
     """
-    movies_as_json = json.dumps(request_handler.get_movies_by_cinema("Braga"))
+    movies_as_json = json.dumps(request_handler.get_movies_by_cinema(coordinates=[41.5807204, -8.4293997]))
+    return HttpResponse(movies_as_json, content_type='json')
+
+def req38(request):
+    """ get movies of cinema
+    """
+    movies_as_json = json.dumps(request_handler.get_sessions_by_duration(date="2019-10-31", duration=300, search_term="Nascente"))
     return HttpResponse(movies_as_json, content_type='json')

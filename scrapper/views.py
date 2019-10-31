@@ -3,6 +3,7 @@ from . import request_handler
 from django.core import serializers
 from django.http import HttpResponse
 from .models import *
+import json
 
 # Create your views here.
 def list_movies(request):
@@ -12,7 +13,7 @@ def list_movies(request):
 def test1(request):
     """ get next sessions of specific movie
     """
-    sessions = request_handler.next_sessions_specific_movie(original_title="Joker",date="2019-10-17",time="17:00:00",location="Braga Parque")
+    sessions = request_handler.next_sessions_specific_movie(original_title="Joker",date="2019-10-31",time="17:00:00",location="Braga Parque")
     sessions_as_json = serializers.serialize('json', sessions)
     return HttpResponse(sessions_as_json, content_type='json')
 
@@ -38,5 +39,5 @@ def test4(request):
 def test5(request):
     """ get movies of cinema
     """
-    movies_as_json = serializers.serialize('json', request_handler.get_movies_by_cinema("Braga"))
+    movies_as_json = json.dumps(request_handler.get_movies_by_cinema("Braga"))
     return HttpResponse(movies_as_json, content_type='json')

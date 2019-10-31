@@ -107,7 +107,7 @@ def get_movies_by_cinema(search_term=""):
     cinemas = find_cinemas(search_term)
     movies = movies_of_cinemas(cinemas)
     print(movies)
-    return {}
+    return movies
 
 def next_sessions(location="", coordinates=[]):
     """ List upcoming sessions taking place near the user based on current date

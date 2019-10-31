@@ -34,3 +34,9 @@ def test4(request):
     """
     movies_as_json = serializers.serialize('json', Movie.objects.all())
     return HttpResponse(movies_as_json, content_type='json')
+
+def test5(request):
+    """ get movies of cinema
+    """
+    movies_as_json = serializers.serialize('json', request_handler.get_movies_by_cinema("Braga"))
+    return HttpResponse(movies_as_json, content_type='json')

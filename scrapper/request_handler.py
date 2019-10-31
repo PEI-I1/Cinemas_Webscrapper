@@ -68,7 +68,48 @@ def updateMovieSessions():
 
             session_entry.save()
 
-def next_sessions(coordinates=[]):
+
+def closest_cinema(coordinates=[]):
+    cinemas = Cinema.objects.all()
+    minDist = -1
+    closest_cinema = {}
+    for cinema in cinemas:
+        cinemaCoord = cinema.coordinates.strip().split(',', 1)
+        
+        dist = distance(coordinates[0],coordinates[1],float(cinemaCoord[0]),float(cinemaCoord[1]))
+        if  dist < minDist or minDist==-1 :
+            minDist=dist
+            closest_cinema = cinema
+
+    return closest_cinema.id
+
+def find_cinemas(search_term=""):
+    cinemas = Cinema.objects.all()
+    cinemas_response = []
+    for cinema in cinemas:
+        st = search_term.lower()
+        if st in cinema.name.lower() or st in cinema.alt_name.lower() or st in cinema.city.lower():
+            cinemas_response.append(cinema.coordinates)
+    return cinemas_response
+
+def movies_of_cinemas(cinemas_coordinates):
+    cinemas = Cinema.objects \
+                    .values_list('coordinates', 'name') \
+                    .filter(coordinates__in=cinemas_coordinates)
+    res = {}
+
+    for cinema in cinemas:
+        movie_titles = list(set(Session.objects.filter(cinema=cinema[0]).values_list('movie', flat=True)))
+        res[cinema[1]] = movie_titles
+    return res
+
+def get_movies_by_cinema(search_term=""):
+    cinemas = find_cinemas(search_term)
+    movies = movies_of_cinemas(cinemas)
+    print(movies)
+    return {}
+
+def next_sessions(location="", coordinates=[]):
     """ List upcoming sessions taking place near the user based on current date
     :param: coordinates in list like [41,7]
     """

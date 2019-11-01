@@ -81,7 +81,7 @@ def closest_cinema(coordinates=[]):
             minDist=dist
             closest_cinema = cinema
 
-    return closest_cinema.coordinates
+    return closest_cinema.coordinates,closest_cinema.name
 
 def find_cinemas(search_term=""):
     cinemas = Cinema.objects.all()
@@ -165,13 +165,18 @@ def next_sessions(search_term="", coordinates=[]):
     
     current_date = now.strftime("%Y-%m-%d")
 
-    sessions = Session.objects.filter(cinema__in = cinemas, start_date = current_date, start_time__gte = current_time)
+    sessions = Session.objects \
+                      .filter(cinema__in = cinemas, start_date = current_date, start_time__gte = current_time)
     # FIX: example 01h00 is smaller than 16h00
     
     res = {}
     for cinema in cinemas:
-        sessions = list(set(Session.objects.filter(cinema=cinema[0]).values_list('movie', 'start_time', 'purchase_link', flat=True)))
-        res[cinema[1]] = sessions
+        raw_sessions = sessions.filter(cinema=cinema[0]).values_list('movie', 'start_time', 'purchase_link')
+        movie_sessions = [{'Movie': raw_session[0],
+                           'Start time': str(raw_session[1]),
+                           'Ticket link' : raw_session[2]}
+                          for raw_session in raw_sessions]
+        res[cinema[1]] = movie_sessions
     return res
     
     """for session in sessions:

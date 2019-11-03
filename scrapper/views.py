@@ -4,10 +4,14 @@ from django.core import serializers
 from django.http import HttpResponse
 from .models import *
 import json
+from datetime import datetime
 
 # Create your views here.
 def list_movies(request):
     request_handler.updateMovieSessions()
+    res = { 'success': True }
+    res_as_json = json.dumps(res)
+    return HttpResponse(res_as_json, content_type='json')
 
 # Test function here.
 def test1(request):
@@ -43,9 +47,10 @@ def req37(request):
     return HttpResponse(movies_as_json, content_type='json')
 
 def req38(request):
-    """ get movies of cinema
+    """ get sessions by duration
     """
-    movies_as_json = json.dumps(request_handler.get_sessions_by_duration(date="2019-10-31", duration=300, search_term="Nascente"))
+    date = datetime.now().strftime('%Y-%m-%d')
+    movies_as_json = json.dumps(request_handler.get_sessions_by_duration(date=date, duration=300, search_term="Braga"))
     return HttpResponse(movies_as_json, content_type='json')
 
 def req39(request):

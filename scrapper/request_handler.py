@@ -89,7 +89,7 @@ def find_cinemas(search_term=""):
     for cinema in cinemas:
         st = search_term.lower()
         if st in cinema.name.lower() or st in cinema.alt_name.lower() or st in cinema.city.lower():
-            cinemas_response.append(cinema.coordinates)
+            cinemas_response.append((cinema.coordinates, cinema.name))
     return cinemas_response
 
 def movies_of_cinemas(cinemas_coordinates):
@@ -105,8 +105,7 @@ def movies_of_cinemas(cinemas_coordinates):
 
 def get_movies_by_cinema(search_term="", coordinates=[]):
     cinemas = get_matching_cinemas(search_term, coordinates)
-    print(cinemas)
-    movies = movies_of_cinemas(cinemas)
+    movies = movies_of_cinemas([cinema[0] for cinema in cinemas])
     return movies
 
 def get_sessions_by_date(cinemas_coordinates, date):
@@ -127,6 +126,7 @@ def get_matching_cinemas(search_term="", coordinates = []):
         cinemas = find_cinemas(search_term)
     else:
         cinemas = [closest_cinema(coordinates)]
+    print(cinemas)
     return cinemas
 
 def get_sessions_by_duration(date, duration, search_term ="", coordinates = []):

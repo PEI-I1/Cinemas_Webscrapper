@@ -3,6 +3,8 @@ from .scrapper_utils import getMovies, getNextDebuts, distance
 import time
 from datetime import datetime, date, time, timedelta
 from django.db.models import Q
+from functools import reduce
+import operator
 
 def updateMovieSessions():
     """ Periodic task to fetch the latest session and movie info
@@ -216,8 +218,7 @@ def next_movies_by_duration(duration,coordinates=[]):
     movies_results = list(dict.fromkeys(movies_results))
     return movies_results
     
-    
-def get_movies(genre="",producer="",cast="",synopsis="",age=18):
+def search_movies(genre="", producer="", cast=[], synopsis=[], age=18):
     """ List upcoming movies based on genre,producer,cast,synopsis and age
     :param: genre requested by the costumer
     :param: producer requested by the costumer
@@ -225,23 +226,24 @@ def get_movies(genre="",producer="",cast="",synopsis="",age=18):
     :param: synopsis/details of the movie given by the costumer
     :param: age limit requested by the costumer
     """
-    movies = Movie.objects.filter(  genre__name__icontains=genre,
-                                    producer__icontains=producer,
-                                    cast__icontains=cast,
-                                    synopsis__icontains=synopsis,
-                                    age_rating_id__lte=age
-                                )
-    """
-    #prints for testing 
-    print("MOVIES-----------------------")
-    for m in movies:
-        print(m.original_title)
-    """ 
+    movies = Movie.objects.filter(
+        genre__name__icontains=genre,
+        producer__icontains=producer,
+        age_rating_id__lte=age
+    )
+
+    if cast != []:
+        movies = movies.filter(reduce(operator.and_, (Q(cast__icontains=actor) for actor in cast)))
+    
+    if synopsis != []:
+        movies = movies.filter(reduce(operator.and_, (Q(synopsis__icontains=term) for term in synopsis)))
+
     return movies
+
 def upcoming_releases():
     """ List upcoming releases
     """
-    movies = Movie.objects.filter( released=False)
+    movies = Movie.objects.filter(released=False)
     movies = list(dict.fromkeys(movies))
     return movies
 

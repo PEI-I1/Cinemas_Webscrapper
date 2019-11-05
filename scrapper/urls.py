@@ -11,7 +11,7 @@ urlpatterns = [
     path('req1', views.req1),
     path('req2', views.req2),
     path('req3', views.req3),
-    path('req4', views.req4), #TODO
+    path('req4', views.req4),
     path('req5', views.req5),
     path('req6', views.req6),
     path('req7', views.req7),

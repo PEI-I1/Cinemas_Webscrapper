@@ -132,10 +132,10 @@ def get_sessions_by_date(search_term="", coordinates=[], date = datetime.now().s
     res = {}
     for session in sessions:
         session_object = {'Start date': str(session[0]),
-                            'Start time': str(session[1]),
-                            'Ticket link': session[2]}
+                          'Start time': str(session[1]),
+                          'Ticket link': session[2]}
         res[session[-2]] = res.get(session[-2], {})
-        res[session[-2]][session[-1]] = res[session[-2]].get(session[-1], []) + [session_object]
+        res[session[-2]][session[-1]] = {'sessions': res[session[-2]].get(session[-1], {'sessions':[]})['sessions'] + [session_object]}
     return res
     
 
@@ -182,11 +182,10 @@ def next_sessions(search_term="", coordinates=[]):
     for session in sessions:
         session_object = {'Start date': str(session[1]),
                            'Start time': str(session[2]),
-                           'Movie': session[0],
                            'Ticket link' : session[3]}
-        res[session[-1]] = res.get(session[-1], []) + [session_object]
+        res[session[-1]] = res.get(session[-1], {})
+        res[session[-1]][session[0]] = {'sessions': res[session[-1]].get(session[0], {'sessions':[]})['sessions'] + [session_object]}
     return res
-
 
 def next_movies(coordinates=[]):
     """ List upcoming movies taking place near the user based on current date
@@ -262,20 +261,16 @@ def get_sessions_by_movie(movie="", search_term="", coordinates=[], date = datet
 
     movies_matched = Movie.objects.filter(Q(original_title__icontains=movie) | Q(title_pt__icontains=movie)).values_list('original_title')
     
-    sessions = filter_sessions_by_datetime(search_term, coordinates, date, time)
+    sessions = filter_sessions_by_datetime(search_term, coordinates, date, time) \
+                .filter(movie__in=movies_matched) \
+                .values_list('movie', 'start_date', 'start_time', 'purchase_link', 'cinema__name')
 
     res = {}
-    for movie in movies_matched:
-        raw_movie_sessions = sessions.filter(movie=movie[0]).values_list('start_date', 'start_time', 'purchase_link')
-        if(len(raw_movie_sessions) > 0):
-            movie_sessions = [{'Start date': str(raw_session[0]),
-                               'Start time': str(raw_session[1]),
-                               'Ticket link': raw_session[2]}
-                          for raw_session in raw_movie_sessions]
-            res[movie[0]] = {'sessions': movie_sessions}
+    for session in sessions:
+        session_object = {'Start date': str(session[1]),
+                          'Start time': str(session[2]),
+                          'Ticket link' : session[3]}
+        res[session[-1]] = res.get(session[-1], {})
+        res[session[-1]][session[0]] = {'sessions': res[session[-1]].get(session[0], {'sessions':[]})['sessions'] + [session_object]}
     
     return res
-
-                                    
-    
-

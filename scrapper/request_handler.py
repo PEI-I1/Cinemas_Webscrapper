@@ -6,6 +6,8 @@ from django.db.models import Q
 from functools import reduce
 import operator
 
+MID_DAY_S = time(12, 0, 0).strftime('%H:%M:%S')
+
 def updateMovieSessions():
     """ Periodic task to fetch the latest session and movie info
     """
@@ -110,13 +112,6 @@ def get_movies_by_cinema(search_term="", coordinates=[]):
     movies = movies_of_cinemas([cinema[0] for cinema in cinemas])
     return movies
 
-def get_sessions_by_date(cinemas_coordinates, date):
-    """ Get sessions taking placing in a cinema on a given date
-    :param: cinema coordinates
-    :param: date 
-    """
-    return Session.objects.filter(start_date=date, cinema__in=cinemas_coordinates)                     
-
 
 def get_matching_cinemas(search_term="", coordinates = []):
     """ Return the coordinates of all the matching cinemas
@@ -131,22 +126,47 @@ def get_matching_cinemas(search_term="", coordinates = []):
     print(cinemas)
     return cinemas
 
-def get_sessions_by_duration(date, duration, search_term ="", coordinates = []):
-    """ 
-    :param: Duration limit
-    """
-    cinemas = get_matching_cinemas(search_term, coordinates)
-    movies_ud = Movie.objects.filter(length__lte=duration).values_list('original_title', 'length')
-    sessions = get_sessions_by_date(cinemas, date)
+
+def get_sessions_by_date(search_term="", coordinates=[], date = datetime.now().strftime('%Y-%m-%d'), time = time(12, 0, 0).strftime('%H:%M:%S')):
+    sessions = filter_sessions_by_datetime(search_term, coordinates, date, time)
+    movies_ud = Movie.objects.values_list('original_title', 'length').all()
     res = {}
     for movie in movies_ud:
         raw_movie_sessions = sessions.filter(movie=movie[0]).values_list('start_date', 'start_time', 'purchase_link')
-        movie_sessions = [{'Start date': str(raw_session[0]),
-                           'Start time': str(raw_session[1]),
-                           'Ticket link': raw_session[2]}
+        if(len(raw_movie_sessions) > 0):
+            movie_sessions = [{'Start date': str(raw_session[0]),
+                               'Start time': str(raw_session[1]),
+                               'Ticket link': raw_session[2]}
                           for raw_session in raw_movie_sessions]
-        res[movie[0]] = {'length': movie[1], 'sessions': movie_sessions}
+            res[movie[0]] = {'length': movie[1], 'sessions': movie_sessions}
 
+    return res
+    
+
+def filter_sessions_by_datetime(search_term="", coordinates=[], date = datetime.now().strftime('%Y-%m-%d'), time = time(12, 0, 0).strftime('%H:%M:%S')):
+    """ TODO
+    """
+    cinemas = get_matching_cinemas(search_term, coordinates)
+    return Session.objects.filter(start_date=date,
+                                  start_time__gte=time,
+                                  cinema__in=[cinema[0] for cinema in cinemas])
+
+
+def get_sessions_by_duration(duration, search_term = "", coordinates = [], date = datetime.now().strftime('%Y-%m-%d'), time = time(12, 0, 0).strftime('%H:%M:%S')):
+    """ TODO
+    """
+    sessions = filter_sessions_by_datetime(search_term, coordinates, date, time)
+    movies_ud = Movie.objects.filter(length__lte=duration).values_list('original_title', 'length')
+    res = {}
+    for movie in movies_ud:
+        raw_movie_sessions = sessions.filter(movie=movie[0]).values_list('start_date', 'start_time', 'purchase_link')
+        if(len(raw_movie_sessions) > 0):
+            movie_sessions = [{'Start date': str(raw_session[0]),
+                               'Start time': str(raw_session[1]),
+                               'Ticket link': raw_session[2]}
+                          for raw_session in raw_movie_sessions]
+            res[movie[0]] = {'length': movie[1], 'sessions': movie_sessions}
+            
     return res
     
 
@@ -161,16 +181,18 @@ def next_sessions(search_term="", coordinates=[]):
     current_time = now.strftime("%H:%M:%S")
     past_mid_night = current_time[0] == '0' and int(current_time[1]) < 5
 
-    if past_mid_night: #in cinemas nos website past mid-night sessions are still in the previous day , so we need to subtract one day if its past mid-night
+    if past_mid_night: #account for sessions past mid-night
         take_one_day = timedelta(days = -1)
         now = now + take_one_day
     
     current_date = now.strftime("%Y-%m-%d")
 
     sessions = Session.objects \
-                      .filter(cinema__in = cinemas, start_date = current_date, start_time__gte = current_time)
-    # FIX: example 01h00 is smaller than 16h00
-    
+                      .filter(cinema__in = cinemas,
+                              start_date = current_date,
+                              start_time__gte = current_time,
+                              start_time__lte = MID_DAY_S)    # FIX: example 01h00 is smaller than 16h00
+
     res = {}
     for cinema in cinemas:
         raw_sessions = sessions.filter(cinema=cinema[0]).values_list('movie', 'start_time', 'purchase_link')
@@ -180,18 +202,7 @@ def next_sessions(search_term="", coordinates=[]):
                           for raw_session in raw_sessions]
         res[cinema[1]] = movie_sessions
     return res
-    
-    """for session in sessions:
 
-        session_is_past_midnight = str(session.start_time)[0]=='0' and int(str(session.start_time)[1])<5
-        session_before_current_before =  not session_is_past_midnight and not past_mid_night and session.start_time > now.time() 
-        session_after_current_before =  session_is_past_midnight and not past_mid_night and True
-        session_before_current_after =  not session_is_past_midnight and past_mid_night and False 
-        session_after_current_after =  session_is_past_midnight and past_mid_night and session.start_time > now.time() 
-
-        if session_before_current_before or session_after_current_before or session_before_current_after or session_after_current_after:
-            next_sessions_list.append(session)
-    return next_sessions_list"""
 
 def next_movies(coordinates=[]):
     """ List upcoming movies taking place near the user based on current date
@@ -291,15 +302,5 @@ def next_sessions_specific_movie(original_title,date="",time="",location=""):
             if session_before_current_before or session_after_current_before or session_before_current_after or session_after_current_after:
                 next_sessions_list.append(session)
         sessions = next_sessions_list
-
-    """
-    #testing
-    print("LEN=" + str(len(sessions)) )
-    for s in sessions:
-        print("-------")
-        print(s.start_time)
-        print(s.start_date)
-        print("--------")
-    """
 
     return sessions

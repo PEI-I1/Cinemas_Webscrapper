@@ -33,63 +33,76 @@ def all_movies(request):
     movies_as_json = serializers.serialize('json', Movie.objects.all())
     return HttpResponse(movies_as_json, content_type='json')
 
-def req37(request):
+def req1(request):
     """ get movies of cinema
     """
     movies_as_json = json.dumps(request_handler.get_movies_by_cinema(coordinates=[41.5807204, -8.4293997]))
     return HttpResponse(movies_as_json, content_type='json')
 
-def req38(request):
+def req2(request):
     """ get sessions by duration
     """
     date = datetime.now().strftime('%Y-%m-%d')
     movies_as_json = json.dumps(request_handler.get_sessions_by_duration(date=date, duration=300, search_term="Braga"))
     return HttpResponse(movies_as_json, content_type='json')
 
-def req39(request):
+def req3(request):
     """ get upcoming sessions
     """
     sessions_as_json = json.dumps(request_handler.next_sessions(coordinates=[41.5807204, -8.4293997]))
     return HttpResponse(sessions_as_json, content_type='json')
 
-def req42(request):
+def req4(request):
+    pass
+
+def req5(request):
+    sessions_as_json = json.dumps(request_handler.get_sessions_by_date(search_term="Evora"))
+    return HttpResponse(sessions_as_json, content_type='json')
+    
+def req6(request):
     """ search movies based on the genre
     """
     movies = request_handler.search_movies(genre='comédia')
     movies_as_json = serializers.serialize('json', movies)
     return HttpResponse(movies_as_json, content_type='json')
 
-def req43(request):
+def req7(request):
     """ search movies based on the producer
     """
     movies = request_handler.search_movies(producer='Woody')
     movies_as_json = serializers.serialize('json', movies)
     return HttpResponse(movies_as_json, content_type='json')
 
-def req44(request):
+def req8(request):
     """ search movies based on cast
     """
     movies = request_handler.search_movies(cast=['Cena', 'Leguizamo'])
     movies_as_json = serializers.serialize('json', movies)
     return HttpResponse(movies_as_json, content_type='json')
 
-def req45(request):
+def req9(request):
     """ search movies based on synopsis
     """
     movies = request_handler.search_movies(synopsis=['Nova Iorque', 'planos'])
     movies_as_json = serializers.serialize('json', movies)
     return HttpResponse(movies_as_json, content_type='json')
 
-def req46(request):
+def req10(request):
     """ search movies based on age restriction
     """
     movies = request_handler.search_movies(age=10)
     movies_as_json = serializers.serialize('json', movies)
     return HttpResponse(movies_as_json, content_type='json')
 
-def req47(request):
+def req11(request):
     """ get next releases
     """
     movies = request_handler.upcoming_releases()
     movies_as_json = serializers.serialize('json', movies)
     return HttpResponse(movies_as_json, content_type='json')
+
+def req12(request):
+    pass
+
+def req13(request):
+    pass

@@ -53,10 +53,11 @@ def req3(request):
     return HttpResponse(sessions_as_json, content_type='json')
 
 def req4(request):
-    pass
+    sessions_as_json = json.dumps(request_handler.get_sessions_by_movie(search_term='Braga', movie='Gemini'))
+    return HttpResponse(sessions_as_json, content_type='json')
 
 def req5(request):
-    sessions_as_json = json.dumps(request_handler.get_sessions_by_date(search_term="Evora"))
+    sessions_as_json = json.dumps(request_handler.get_sessions_by_date(search_term='Evora'))
     return HttpResponse(sessions_as_json, content_type='json')
     
 def req6(request):

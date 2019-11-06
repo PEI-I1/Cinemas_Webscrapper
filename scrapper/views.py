@@ -29,10 +29,10 @@ def get_movies_by_cinema(request):
         movies_as_json = json.dumps({'error': 'Bad parameters'})
     return HttpResponse(movies_as_json, content_type='json')
 
+
 def get_sessions_by_duration(request):
     """ get sessions by duration
     """
-    #duration, search_term = "", coordinates = [], date = datetime.now().strftime('%Y-%m-%d'), time = time(12, 0, 0).strftime('%H:%M:%S'))
     duration = request.GET.get('duration', '')
     if not duration:
         sessions_as_json = json.dumps({'error': 'Duration parameter missing'})
@@ -43,12 +43,13 @@ def get_sessions_by_duration(request):
         start_date = request.GET.get('date', datetime.now().strftime('%Y-%m-%d'))
         start_time = request.GET.get('time', time(12, 0, 0).strftime('%H:%M:%S'))
         if lat and lon:
-            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(duration=int(duration), coordinates=[float(lat), float(lon)], date=start_date, time=start_time))
+            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(date=start_date, time=start_time, duration=int(duration), coordinates=[float(lat), float(lon)]))
         elif search_term:
-            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(duration=int(duration), search_term=search_term, date=start_date, time=start_time))
+            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(date=start_date, time=start_time, duration=int(duration), search_term=search_term))
         else:
             sessions_as_json = json.dumps({'error': 'Bad parameters'})
     return HttpResponse(sessions_as_json, content_type='json')
+
 
 def req3(request):
     """ get upcoming sessions
@@ -56,19 +57,23 @@ def req3(request):
     sessions_as_json = json.dumps(request_handler.next_sessions(coordinates=[41.5807204, -8.4293997]))
     return HttpResponse(sessions_as_json, content_type='json')
 
+
 def req4(request):
     sessions_as_json = json.dumps(request_handler.get_sessions_by_movie(search_term='Braga', movie='Gemini'))
     return HttpResponse(sessions_as_json, content_type='json')
 
+
 def req5(request):
     sessions_as_json = json.dumps(request_handler.get_sessions_by_date(search_term='Evora'))
     return HttpResponse(sessions_as_json, content_type='json')
-    
+
+
 def req6(request):
     """ search movies based on the genre
     """
     movies_as_json = json.dumps(request_handler.search_movies(genre='comédia'))
     return HttpResponse(movies_as_json, content_type='json')
+
 
 def req7(request):
     """ search movies based on the producer
@@ -76,11 +81,13 @@ def req7(request):
     movies_as_json = json.dumps(request_handler.search_movies(producer='Woody'))
     return HttpResponse(movies_as_json, content_type='json')
 
+
 def req8(request):
     """ search movies based on cast
     """
     movies_as_json = json.dumps(request_handler.search_movies(cast=['Cena', 'Leguizamo']))
     return HttpResponse(movies_as_json, content_type='json')
+
 
 def req9(request):
     """ search movies based on synopsis
@@ -88,17 +95,20 @@ def req9(request):
     movies_as_json = json.dumps(request_handler.search_movies(synopsis=['Nova Iorque', 'planos']))
     return HttpResponse(movies_as_json, content_type='json')
 
+
 def req10(request):
     """ search movies based on age restriction
     """
     movies_as_json = json.dumps(request_handler.search_movies(age=10))
     return HttpResponse(movies_as_json, content_type='json')
 
+
 def req11(request):
     """ get next releases
     """
     movies_as_json = json.dumps(request_handler.upcoming_releases())
     return HttpResponse(movies_as_json, content_type='json')
+
 
 def req13(request):
     movies_as_json = json.dumps(request_handler.get_movie_details(movie='Gemini'))

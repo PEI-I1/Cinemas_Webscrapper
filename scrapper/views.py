@@ -96,10 +96,6 @@ def req11(request):
     movies_as_json = json.dumps(request_handler.upcoming_releases())
     return HttpResponse(movies_as_json, content_type='json')
 
-def req12(request):
-    seats_as_json = json.dumps(request_handler.get_session_available_seats(session_id=10))
-    return HttpResponse(seats_as_json, content_type='json')
-
 def req13(request):
     movies_as_json = json.dumps(request_handler.get_movie_details(movie='Gemini'))
     return HttpResponse(movies_as_json, content_type='json')

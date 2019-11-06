@@ -19,7 +19,6 @@ urlpatterns = [
     path('req9', views.req9),
     path('req10',views.req10),
     path('req11',views.req11),
-    path('req12',views.req12), #TODO
     path('req13',views.req13),
 ]
 

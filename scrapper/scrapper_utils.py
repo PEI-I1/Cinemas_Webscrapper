@@ -96,18 +96,16 @@ def getSchedule(schedule_html):
     
     for day_schedule in schedule_html:
         day = re.sub(r'normal ', '', day_schedule['data-id'])
-        #print('----> ' + day)
         
         sessions_line = day_schedule.find_all('article', {'class': 'line'})
         for session_line in sessions_line:
             cinema = session_line.find('div', {'class': 'cinema'}).get_text().strip()
             room = session_line.find('div', {'class': 'room'}).get_text().strip()
-            #print(cinema + ', ' + room)
             sessions = session_line.find('div', {'class': 'hours'}).find_all('a')
             for session in sessions:
                 hours = re.sub(r'\s+.*', '', session.get_text().strip())
                 link = session['href']
-
+                available_seats = getSessionAvailability(link)
                 session_object = {
                         'cinema': cinema,
                         'room': re.sub(r'Sala ', '', room),
@@ -116,11 +114,8 @@ def getSchedule(schedule_html):
                         'purchase_link': link,
                         'availability': 0 #available_seats
                 }
-                sessions_objects.append(session_object)                
-                # getSessionAvailability(link) TODO: move me
-
-    #for s in sessions_objects:
-        #print(s)
+                sessions_objects.append(session_object)
+                
     return sessions_objects
 
 def getNextDebuts():
@@ -141,17 +136,22 @@ def getNextDebuts():
     return movies_objects
 
 
-#FIXME
 def getSessionAvailability(link):
     """ Get number of available seats for a given session
+    :param: Link to purchase ticket for a session
+    :return: number of available seats
     """
     r = requests.get(link)
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
         available_seats = soup.find('tfoot').find('div', {'class': 'right'}).find('span', {'class': 'number'}).get_text()
-        print('\t' + hours + '  ' + link + '  ' + available_seats + ' lugares')
+        if available_seats != "":
+            return available_seats
+        else:
+            return 0
     else:
-        print("Não foi possível obter o número de lugares disponíveis para a sessão")
+        return 0
+        
 
 def distance(p1X,p1Y,p2X,p2Y):
     """ Get distance between 2 localizations based on both coordinates 

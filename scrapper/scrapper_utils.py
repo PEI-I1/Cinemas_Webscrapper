@@ -141,17 +141,19 @@ def getSessionAvailability(link):
     :param: Link to purchase ticket for a session
     :return: number of available seats
     """
+    return 0
     r = requests.get(link)
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
-        available_seats = soup.find('tfoot').find('div', {'class': 'right'}).find('span', {'class': 'number'}).get_text()
-        if available_seats != "":
-            return available_seats
-        else:
-            return 0
-    else:
-        return 0
-        
+        #available_seats = soup.find('tfoot').find('div', {'class': 'right'}).find('span', {'class': 'number'}).get_text()
+        tmp = soup.find('tfoot')
+        if tmp:
+            tmp = tmp.find('div', {'class': 'right'})
+            if tmp:
+                tmp = tmp.find('span', {'class': 'number'})
+                if tmp:
+                    return int(tmp.get_text())
+    return 0
 
 def distance(p1X,p1Y,p2X,p2Y):
     """ Get distance between 2 localizations based on both coordinates 

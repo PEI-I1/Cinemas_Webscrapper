@@ -123,7 +123,6 @@ def get_matching_cinemas(search_term="", coordinates = []):
         cinemas = find_cinemas(search_term)
     else:
         cinemas = [closest_cinema(coordinates)]
-    print(cinemas)
     return cinemas
 
 

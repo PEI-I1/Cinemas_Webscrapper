@@ -4,47 +4,51 @@ from django.core import serializers
 from django.http import HttpResponse
 from .models import *
 import json
-from datetime import datetime
+from datetime import datetime, time
+
+# [41.5807204, -8.4293997]
 
 # Create your views here.
-def list_movies(request):
+def update_DB(request):
     request_handler.updateMovieSessions()
     res = { 'success': True }
     res_as_json = json.dumps(res)
     return HttpResponse(res_as_json, content_type='json')
 
-# Test function here.
-def test1(request):
-    """ get next sessions of specific movie
-    """
-    sessions = request_handler.next_sessions_specific_movie(original_title="Joker",date="2019-10-31",time="17:00:00",location="Braga Parque")
-    sessions_as_json = serializers.serialize('json', sessions)
-    return HttpResponse(sessions_as_json, content_type='json')
-
-def all_cinemas(request):
-    """ get all cinemas
-    """
-    cinemas_as_json = serializers.serialize('json', Cinema.objects.all())
-    return HttpResponse(cinemas_as_json, content_type='json')
-
-def all_movies(request):
-    """ get all movies
-    """
-    movies_as_json = serializers.serialize('json', Movie.objects.all())
-    return HttpResponse(movies_as_json, content_type='json')
-
-def req1(request):
+def get_movies_by_cinema(request):
     """ get movies of cinema
     """
-    movies_as_json = json.dumps(request_handler.get_movies_by_cinema(coordinates=[41.5807204, -8.4293997]))
+    search_term = request.GET.get('search_term', '')
+    lat = request.GET.get('lat', '')
+    lon = request.GET.get('lon', '')
+    if lat and lon:
+        movies_as_json = json.dumps(request_handler.get_movies_by_cinema(coordinates=[float(lat), float(lon)]))
+    elif search_term:
+        movies_as_json = json.dumps(request_handler.get_movies_by_cinema(search_term=search_term))
+    else:
+        movies_as_json = json.dumps({'error': 'Bad parameters'})
     return HttpResponse(movies_as_json, content_type='json')
 
-def req2(request):
+def get_sessions_by_duration(request):
     """ get sessions by duration
     """
-    date = datetime.now().strftime('%Y-%m-%d')
-    movies_as_json = json.dumps(request_handler.get_sessions_by_duration(date=date, duration=300, search_term="Braga"))
-    return HttpResponse(movies_as_json, content_type='json')
+    #duration, search_term = "", coordinates = [], date = datetime.now().strftime('%Y-%m-%d'), time = time(12, 0, 0).strftime('%H:%M:%S'))
+    duration = request.GET.get('duration', '')
+    if not duration:
+        sessions_as_json = json.dumps({'error': 'Duration parameter missing'})
+    else:
+        search_term = request.GET.get('search_term', '')
+        lat = request.GET.get('lat', '')
+        lon = request.GET.get('lon', '')
+        start_date = request.GET.get('date', datetime.now().strftime('%Y-%m-%d'))
+        start_time = request.GET.get('time', time(12, 0, 0).strftime('%H:%M:%S'))
+        if lat and lon:
+            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(duration=int(duration), coordinates=[float(lat), float(lon)], date=start_date, time=start_time))
+        elif search_term:
+            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(duration=int(duration), search_term=search_term, date=start_date, time=start_time))
+        else:
+            sessions_as_json = json.dumps({'error': 'Bad parameters'})
+    return HttpResponse(sessions_as_json, content_type='json')
 
 def req3(request):
     """ get upcoming sessions

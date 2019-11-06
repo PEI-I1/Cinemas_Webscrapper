@@ -2,14 +2,10 @@ from django.urls import path, include
 from . import views
 
 urlpatterns = [
-    path('movies', views.list_movies),
+    path('movies', views.update_DB),
     
-    path('test1', views.test1),
-    path('all_cinemas', views.all_cinemas),
-    path('all_movies', views.all_movies),
-    
-    path('req1', views.req1),
-    path('req2', views.req2),
+    path('movies/by_cinema', views.get_movies_by_cinema),
+    path('sessions/by_duration', views.get_sessions_by_duration),
     path('req3', views.req3),
     path('req4', views.req4),
     path('req5', views.req5),

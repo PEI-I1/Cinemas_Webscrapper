@@ -6,16 +6,17 @@ urlpatterns = [
     
     path('movies/by_cinema', views.get_movies_by_cinema),
     path('sessions/by_duration', views.get_sessions_by_duration),
-    path('req3', views.req3),
-    path('req4', views.req4),
-    path('req5', views.req5),
+    path('sessions/next_sessions', views.next_sessions),
+    path('sessions/by_movie', views.get_sessions_by_movie),
+    path('sessions/by_date', views.get_sessions_by_date),
+    path('movies/search', views.search_movies),
     path('req6', views.req6),
     path('req7', views.req7),
     path('req8', views.req8),
     path('req9', views.req9),
     path('req10',views.req10),
-    path('req11',views.req11),
-    path('req13',views.req13),
+    path('movies/releases',views.upcoming_releases),
+    path('movies/details',views.get_movie_details),
 ]
 
 # 1  - O utilizador deve poder consultar os filmes em exibicao num determinado cinema.

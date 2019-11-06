@@ -63,47 +63,43 @@ def req5(request):
 def req6(request):
     """ search movies based on the genre
     """
-    movies = request_handler.search_movies(genre='comédia')
-    movies_as_json = serializers.serialize('json', movies)
+    movies_as_json = json.dumps(request_handler.search_movies(genre='comédia'))
     return HttpResponse(movies_as_json, content_type='json')
 
 def req7(request):
     """ search movies based on the producer
     """
-    movies = request_handler.search_movies(producer='Woody')
-    movies_as_json = serializers.serialize('json', movies)
+    movies_as_json = json.dumps(request_handler.search_movies(producer='Woody'))
     return HttpResponse(movies_as_json, content_type='json')
 
 def req8(request):
     """ search movies based on cast
     """
-    movies = request_handler.search_movies(cast=['Cena', 'Leguizamo'])
-    movies_as_json = serializers.serialize('json', movies)
+    movies_as_json = json.dumps(request_handler.search_movies(cast=['Cena', 'Leguizamo']))
     return HttpResponse(movies_as_json, content_type='json')
 
 def req9(request):
     """ search movies based on synopsis
     """
-    movies = request_handler.search_movies(synopsis=['Nova Iorque', 'planos'])
-    movies_as_json = serializers.serialize('json', movies)
+    movies_as_json = json.dumps(request_handler.search_movies(synopsis=['Nova Iorque', 'planos']))
     return HttpResponse(movies_as_json, content_type='json')
 
 def req10(request):
     """ search movies based on age restriction
     """
-    movies = request_handler.search_movies(age=10)
-    movies_as_json = serializers.serialize('json', movies)
+    movies_as_json = json.dumps(request_handler.search_movies(age=10))
     return HttpResponse(movies_as_json, content_type='json')
 
 def req11(request):
     """ get next releases
     """
-    movies = request_handler.upcoming_releases()
-    movies_as_json = serializers.serialize('json', movies)
+    movies_as_json = json.dumps(request_handler.upcoming_releases())
     return HttpResponse(movies_as_json, content_type='json')
 
 def req12(request):
-    pass
+    seats_as_json = json.dumps(request_handler.get_session_available_seats(session_id=10))
+    return HttpResponse(seats_as_json, content_type='json')
 
 def req13(request):
-    pass
+    movies_as_json = json.dumps(request_handler.get_movie_details(movie='Gemini'))
+    return HttpResponse(movies_as_json, content_type='json')

@@ -211,7 +211,32 @@ def next_movies_by_duration(duration,coordinates=[]):
             movies_results.append(movie)
     movies_results = list(dict.fromkeys(movies_results))
     return movies_results
+
+def movies_queryset_to_array(movies, full_description = False):
+    if full_description:
+        movies = movies.values_list('original_title', 'title_pt', 'cast', 'genre__name', 'age_rating', 'banner_url', 'producer', 'synopsis', 'length', 'trailer_url', 'released')
+    else:
+        movies = movies.values_list('original_title', 'title_pt', 'cast', 'genre__name', 'age_rating', 'banner_url')
     
+    res = []
+    for movie in movies:
+        movie_object = {
+            'Original title': movie[0],
+            'Portuguese title': movie[1],
+            'Cast': movie[2],
+            'Genre': movie[3],
+            'Age rating': movie[4],
+            'Banner': movie[5]
+        }
+        if full_description:
+            movie_object['Producer'] = movie[6]
+            movie_object['Synopsis'] = movie[7]
+            movie_object['Length'] = movie[8]
+            movie_object['Trailer'] = movie[9]
+            movie_object['Released'] = movie[10]
+        res.append(movie_object)
+    return res
+
 def search_movies(genre="", producer="", cast=[], synopsis=[], age=18):
     """ List upcoming movies based on genre,producer,cast,synopsis and age
     :param: genre requested by the costumer
@@ -232,28 +257,26 @@ def search_movies(genre="", producer="", cast=[], synopsis=[], age=18):
     if synopsis != []:
         movies = movies.filter(reduce(operator.and_, (Q(synopsis__icontains=term) for term in synopsis)))
 
-    return movies
+    return movies_queryset_to_array(movies)
 
 def upcoming_releases():
     """ List upcoming releases
     """
     movies = Movie.objects.filter(released=False)
-    movies = list(dict.fromkeys(movies))
-    return movies
+    return movies_queryset_to_array(movies)
 
-def available_seats(session_id):
+def get_session_available_seats(session_id):
     """ Available seats of un specific session
     :param: id of session
     """
     session = Session.objects.get(pk=session_id)
     return session.availability
 
-def movie_details(original_title):
-    """ Movies details of un specific movie
-    :param: original_title of movie (primarykey)
+def get_movie_details(movie=""):
+    """ TODO
     """
-    movie = Movie.objects.get(pk=original_title)
-    return movie.synopsis
+    movies = Movie.objects.filter(Q(original_title__icontains=movie) | Q(title_pt__icontains=movie)).values_list('original_title')
+    return movies_queryset_to_array(movies, full_description=True)
 
 def get_sessions_by_movie(movie="", search_term="", coordinates=[], date = datetime.now().strftime('%Y-%m-%d'), time = time(12, 0, 0).strftime('%H:%M:%S')):
     """ TODO

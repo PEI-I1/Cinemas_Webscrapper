@@ -17,7 +17,7 @@ def update_DB(request):
     return HttpResponse(res_as_json, content_type='json')
 
 def get_movies_by_cinema(request):
-    """ get movies of cinema
+    """ Search for movies in given cinema
     """
     search_term = request.GET.get('search_term', '')
     lat = request.GET.get('lat', '')
@@ -32,7 +32,7 @@ def get_movies_by_cinema(request):
 
 
 def get_sessions_by_duration(request):
-    """ get sessions by duration
+    """ Search for sessions for movies under a certain duration
     """
     duration = request.GET.get('duration', '')
     if not duration:
@@ -53,7 +53,7 @@ def get_sessions_by_duration(request):
 
 
 def next_sessions(request):
-    """ get upcoming sessions
+    """ Get the next sessions in a given cinema
     """
     search_term = request.GET.get('search_term', '')
     lat = request.GET.get('lat', '')
@@ -68,7 +68,7 @@ def next_sessions(request):
 
 
 def get_sessions_by_movie(request):
-    """ get sessions of movie
+    """ Get all sessions for a given movie in a collection of cinemas
     """
     movie = request.GET.get('movie', '')
     if not movie:
@@ -89,7 +89,7 @@ def get_sessions_by_movie(request):
 
 
 def get_sessions_by_date(request):
-    """ get sessions by date
+    """ Get the sessions by date
     """
     search_term = request.GET.get('search_term', '')
     lat = request.GET.get('lat', '')
@@ -106,7 +106,7 @@ def get_sessions_by_date(request):
 
 
 def search_movies(request):
-    """ search movies based on genre, producer, cast, synopsis, age restriction
+    """ Search for movies based on genre, producer, cast, synopsis, age restriction
     """
     genre = request.GET.get('genre', '')
     producer = request.GET.get('producer', '')
@@ -128,43 +128,8 @@ def search_movies(request):
     return HttpResponse(movies_as_json, content_type='json')
 
 
-def req6(request):
-    """ search movies based on the genre
-    """
-    movies_as_json = json.dumps(request_handler.search_movies(genre='comédia'))
-    return HttpResponse(movies_as_json, content_type='json')
-
-
-def req7(request):
-    """ search movies based on the producer
-    """
-    movies_as_json = json.dumps(request_handler.search_movies(producer='Woody'))
-    return HttpResponse(movies_as_json, content_type='json')
-
-
-def req8(request):
-    """ search movies based on cast
-    """
-    movies_as_json = json.dumps(request_handler.search_movies(cast=['Cena', 'Leguizamo']))
-    return HttpResponse(movies_as_json, content_type='json')
-
-
-def req9(request):
-    """ search movies based on synopsis
-    """
-    movies_as_json = json.dumps(request_handler.search_movies(synopsis=['Nova Iorque', 'planos']))
-    return HttpResponse(movies_as_json, content_type='json')
-
-
-def req10(request):
-    """ search movies based on age restriction
-    """
-    movies_as_json = json.dumps(request_handler.search_movies(age=10))
-    return HttpResponse(movies_as_json, content_type='json')
-
-
 def upcoming_releases(request):
-    """ get next releases
+    """ Search for upcoming movies
     """
     movies_as_json = json.dumps(request_handler.upcoming_releases())
     return HttpResponse(movies_as_json, content_type='json')

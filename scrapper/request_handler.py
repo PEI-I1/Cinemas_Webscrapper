@@ -9,7 +9,7 @@ import operator
 MID_DAY_S = time(12, 0, 0).strftime('%H:%M:%S')
 
 def updateMovieSessions():
-    """ Periodic task to fetch the latest session and movie info
+    """ Fetch the latest session and movie info to update the database
     """
     movie_dump = getMovies()
     debuts_dump = getNextDebuts()
@@ -74,7 +74,8 @@ def updateMovieSessions():
 
 
 def closest_cinema(coordinates=[]):
-    """ TODO
+    """ Find the cinemas that are closest to the given coordinates
+    :param: users location
     """
     cinemas = Cinema.objects.all()
     minDist = -1
@@ -91,7 +92,8 @@ def closest_cinema(coordinates=[]):
 
 
 def find_cinemas(search_term=""):
-    """ TODO
+    """ Find cinemas that match the search term
+    :param: string/term to look for
     """
     cinemas = Cinema.objects.all()
     cinemas_response = []
@@ -103,7 +105,8 @@ def find_cinemas(search_term=""):
 
 
 def movies_of_cinemas(cinemas_coordinates):
-    """ TODO
+    """ Check for all the movies in a cinema
+    :param: coordinates corresponding to the cinemas location
     """
     cinemas = Cinema.objects \
                     .values_list('coordinates', 'name') \
@@ -140,6 +143,12 @@ def get_matching_cinemas(search_term="", coordinates = []):
 
 
 def get_sessions_by_date(date, time, search_term="", coordinates=[]):
+    """ Search for all sessions in a specific cinema after a given date-time
+    :param: date of the sessions to search for
+    :param: minimum start time for the sessions
+    :param: query for the cinema
+    :param: user location
+    """
     sessions = filter_sessions_by_datetime(date, time, search_term, coordinates).values_list('start_date',
                                                                                              'start_time',
                                                                                              'purchase_link',
@@ -158,7 +167,12 @@ def get_sessions_by_date(date, time, search_term="", coordinates=[]):
     
 
 def filter_sessions_by_datetime(date, time, search_term="", coordinates=[]):
-    """ TODO
+    """ Filter all sessions taking place after a specific date and time
+    in specific cinemas
+    :param: date of the sessions to search for
+    :param: minimum start time for the sessions
+    :param: query for the cinema
+    :param: user location
     """
     cinemas = get_matching_cinemas(search_term, coordinates)
     sessions = Session.objects.filter(start_date=date,
@@ -168,12 +182,12 @@ def filter_sessions_by_datetime(date, time, search_term="", coordinates=[]):
 
 
 def get_sessions_by_duration(duration, date, time, search_term = "", coordinates = []):
-    """ Retrieve session for movies under the specified duration
+    """ Retrieve sessions for movies under the specified duration
     :param: movie duration limit
-    :param: query for cinema
-    :param: cinema coordinates
-    :param: start date of the sessions
-    :param: start time of the sessions
+    :param: date of the sessions to search for
+    :param: minimum start time for the sessions
+    :param: query for the cinema
+    :param: user location
     """
     sessions = filter_sessions_by_datetime(date, time, search_term, coordinates)
     movies_ud = Movie.objects.filter(length__lte=duration).values_list('original_title')
@@ -196,8 +210,9 @@ def get_sessions_by_duration(duration, date, time, search_term = "", coordinates
     
 
 def next_sessions(search_term="", coordinates=[]):
-    """ List upcoming sessions taking place near the user based on current date
-    :param: coordinates in list like [41,7]
+    """ List upcoming sessions in a specific cinema
+    :param: query for the cinema
+    :param: user location
     """
     now = datetime.today()
     current_time = now.strftime("%H:%M:%S")
@@ -225,23 +240,11 @@ def next_sessions(search_term="", coordinates=[]):
         res[session[-1]][session[0]] = {'sessions': res[session[-1]].get(session[0], {'sessions':[]})['sessions'] + [session_object]}
     return res
 
-    
-def next_movies_by_duration(duration, coordinates=[]):
-    """ List upcoming movies with less duration than given 
-    :param: duration given by costumer in minutes
-    :param: coordinates in list like [41,7]
-    """ 
-    next_movies_list = next_movies(coordinates)
-    movies_results = []
-    for movie in next_movies_list:
-        if movie.length<=duration :
-            movies_results.append(movie)
-    movies_results = list(dict.fromkeys(movies_results))
-    return movies_results
-
 
 def movies_queryset_to_array(movies, full_description = False):
-    """ TODO
+    """ Convert a movie queryset to an array of values
+    :param: movie queryset
+    :param: indicates whether all the info about a movie should be retrieved
     """
     if full_description:
         movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'producer',
@@ -300,14 +303,20 @@ def upcoming_releases():
 
 
 def get_movie_details(movie):
-    """ TODO
+    """ Retrieve the details of a movie
+    :param: movie query
     """
     movies = Movie.objects.filter(Q(original_title__icontains=movie) | Q(title_pt__icontains=movie)).values_list('original_title')
     return movies_queryset_to_array(movies, full_description=True)
 
 
 def get_sessions_by_movie(date, time, movie, search_term="", coordinates=[]):
-    """ TODO
+    """ Get all sessions of a movie in a set of cinemas
+    :param: date of the sessions to search for
+    :param: minimum start time for the sessions
+    :param: movie query
+    :param: query for the cinema
+    :param: user location
     """
     movies_matched = Movie.objects.filter(Q(original_title__icontains=movie) | Q(title_pt__icontains=movie)).values_list('original_title')
     

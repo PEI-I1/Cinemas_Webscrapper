@@ -4,8 +4,10 @@ from datetime import datetime, date, time, timedelta
 from .scrapper_utils import getMovies, getNextDebuts, distance
 from functools import reduce
 import operator
-import math
+#import math
+from haversine import haversine, Unit
 
+MAX_DISTANCE = 10; # Km
 MID_DAY_S = time(12, 0, 0).strftime('%H:%M:%S')
 
 def updateMovieSessions():
@@ -72,35 +74,40 @@ def updateMovieSessions():
 
             session_entry.save()
 
-def haversine_distance(c1, c2):
-    """ Calculate the distance between two points on a spherical surface
+"""def haversine_distance(c1, c2):
+    Calculate the distance between two points on a spherical surface
     :param: Point 1
     :param: Point 2
-    """
+    
     r = 6371e3 #Earth's radius (km)
     hav1 = math.sin((c2[0] - c1[0])/2)**2
     hav2 = math.sin((c2[1] - c1[1])/2)**2
     h = math.sqrt(hav1 + math.cos(c1[0])*math.cos(c2[0])*hav2)
 
-    return 2*r*math.asin(h)
-            
+    return 2*r*math.asin(h)"""      
 
-def closest_cinema(coordinates=[]):
+def haversine_distance(c1, c2):
+    """ Calculate the distance between two points on a spherical surface
+    :param: Point 1
+    :param: Point 2
+    """
+    location_1 = c1
+    location_2 = c2
+    return haversine(location_1, location_2, unit=Unit.KILOMETERS)
+
+
+def closest_cinemas(coordinates=[]):
     """ Find the cinemas that are closest to the given coordinates
     :param: users location
     """
     cinemas = Cinema.objects.all()
-    minDist = -1
-    closest_cinema = {}
+    closest_cinemas = []
     for cinema in cinemas:
-        cinemaCoord = cinema.coordinates.strip().split(',', 1)
-        
-        dist = distance(coordinates[0],coordinates[1],float(cinemaCoord[0]),float(cinemaCoord[1]))
-        if  dist < minDist or minDist==-1 :
-            minDist=dist
-            closest_cinema = cinema
-
-    return closest_cinema.coordinates,closest_cinema.name
+        cinema_coordinates = cinema.coordinates.strip().split(',', 1)
+        distance = haversine_distance((coordinates[0],coordinates[1]),(float(cinema_coordinates[0]),float(cinema_coordinates[1])))
+        if  distance < MAX_DISTANCE:
+            closest_cinemas.append((cinema.coordinates, cinema.name))
+    return closest_cinemas
 
 
 def find_cinemas(search_term=""):
@@ -150,7 +157,7 @@ def get_matching_cinemas(search_term="", coordinates = []):
     if search_term:
         cinemas = find_cinemas(search_term)
     else:
-        cinemas = [closest_cinema(coordinates)]
+        cinemas = closest_cinemas(coordinates)
     return cinemas
 
 

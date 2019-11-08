@@ -1,18 +1,21 @@
 from .models import *
+from django.conf import settings
 from django.db.models import Q
 from datetime import datetime, date, time, timedelta
 from .scrapper_utils import getMovies, getNextDebuts, distance
 from functools import reduce
 import operator
+from celery import shared_task, task
 #import math
 from haversine import haversine, Unit
 
-MAX_DISTANCE = 10; # Km
 MID_DAY_S = time(12, 0, 0).strftime('%H:%M:%S')
 
-def updateMovieSessions():
+@task(bind=True)
+def updateMovieSessions(self):
     """ Fetch the latest session and movie info to update the database
     """
+    print("Updating database")
     movie_dump = getMovies()
     debuts_dump = getNextDebuts()
 
@@ -74,6 +77,8 @@ def updateMovieSessions():
 
             session_entry.save()
 
+        print("Update complete")
+            
 """def haversine_distance(c1, c2):
     Calculate the distance between two points on a spherical surface
     :param: Point 1
@@ -105,7 +110,7 @@ def closest_cinemas(coordinates=[]):
     for cinema in cinemas:
         cinema_coordinates = cinema.coordinates.strip().split(',', 1)
         distance = haversine_distance((coordinates[0],coordinates[1]),(float(cinema_coordinates[0]),float(cinema_coordinates[1])))
-        if  distance < MAX_DISTANCE:
+        if  distance < settings.MAX_DISTANCE:
             closest_cinemas.append((cinema.coordinates, cinema.name))
     return closest_cinemas
 

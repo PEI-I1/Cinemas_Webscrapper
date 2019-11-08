@@ -42,35 +42,79 @@ The API provided by this service must allow:
 
 #### API
 
+* Search for movies in cinema
+
 ```http
 GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
 ```
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| `search_term` | `string` | **Optional**. Cinema query. |
-| `lat` and `lon` | `float` | **Optional**. User location. |
+| `search_term` | `string` | **Optional***. Cinema query. |
+| `lat` and `lon` | `float` | **Optional***. User location. |
+
+------
+<!---------------------------------------------------->
+
+* Search for movies based on genre, producer, cast, synopsis and age restriction
 
 ```http
-GET /movies/search
+GET /movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
 ```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `genre` | `string` | **Optional**. Movie genre. |
+| `cast` | `string` | **Optional**. Actors names, comma separated. |
+| `producer` | `string` | **Optional**. Producer name. |
+| `synopsis` | `string` | **Optional**. Words to search on the movie synopsis, comma separated. |
+| `age` | `int` | **Optional** Maximum age restriction. |
+
+**Note**: All parameters are optional but at least one of them needs to be provided.
+
+------
+<!---------------------------------------------------->
+
+* Search for upcoming movies
 
 ```http
 GET /movies/releases
 ```
 
-```http
-GET /movies/details
-```
+------
+<!---------------------------------------------------->
+
+* Get details of movie
 
 ```http
-GET /sessions/by_duration?search_term=<>&lat=<>&lon=<>
+GET /movies/details?movie=<>
 ```
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| `search_term` | `string` | **Optional**. Cinema query. |
-| `lat` and `lon` | `float` | **Optional**. User location. |
+| `movie` | `string` | **Required**. Name of the movie. |
+
+------
+<!---------------------------------------------------->
+
+* Search for sessions of movies under a certain duration
+
+```http
+GET /sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=<>
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `search_term` | `string` | **Optional***. Cinema query. |
+| `lat` and `lon` | `float` | **Optional***. User location. |
+| `duration` | `int` | **Required**. Maximum value of duration (in minutes). |
+| `date` | `Year-Month-Day` | **Optional**. Date. |
+| `time` | `Hours:Minutes:Seconds` | **Optional** Time. |
+
+------
+<!---------------------------------------------------->
+
+* Search for the next sessions
 
 ```http
 GET /sessions/next_sessions?search_term=<>&lat=<>&lon=<>
@@ -78,23 +122,41 @@ GET /sessions/next_sessions?search_term=<>&lat=<>&lon=<>
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| `search_term` | `string` | **Optional**. Cinema query. |
-| `lat` and `lon` | `float` | **Optional**. User location. |
+| `search_term` | `string` | **Optional***. Cinema query. |
+| `lat` and `lon` | `float` | **Optional***. User location. |
+
+------
+<!---------------------------------------------------->
+
+* Search sessions for a given movie
 
 ```http
-GET /sessions/by_movie?search_term=<>&lat=<>&lon=<>
+GET /sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
 ```
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| `search_term` | `string` | **Optional**. Cinema query. |
-| `lat` and `lon` | `float` | **Optional**. User location. |
+| `search_term` | `string` | **Optional***. Cinema query. |
+| `lat` and `lon` | `float` | **Optional***. User location. |
+| `movie` | `string` | **Required**. Name of the movie. |
+| `date` | `Year-Month-Day` | **Optional**. Date. |
+| `time` | `Hours:Minutes:Seconds` | **Optional** Time. |
+
+------
+<!---------------------------------------------------->
+
+* Search for sessions by date
 
 ```http
-GET /sessions/by_date?search_term=<>&lat=<>&lon=<>
+GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&time=<>
 ```
 
 | Parameter | Type | Description |
 | :--- | :--- | :--- |
-| `search_term` | `string` | **Optional**. Cinema query. |
-| `lat` and `lon` | `float` | **Optional**. User location. |
+| `search_term` | `string` | **Optional***. Cinema query. |
+| `lat` and `lon` | `float` | **Optional***. User location. |
+| `date` | `Year-Month-Day` | **Optional**. Date. |
+| `time` | `Hours:Minutes:Seconds` | **Optional**. Time. |
+
+------
+***Note**: The methods related to sessions require `search_term` or in alternative `lat` and `lon`, so that the desired or close cinemas can be obtained.

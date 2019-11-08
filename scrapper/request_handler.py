@@ -1,10 +1,10 @@
 from .models import *
-from .scrapper_utils import getMovies, getNextDebuts, distance
-import time
-from datetime import datetime, date, time, timedelta
 from django.db.models import Q
+from datetime import datetime, date, time, timedelta
+from .scrapper_utils import getMovies, getNextDebuts, distance
 from functools import reduce
 import operator
+import math
 
 MID_DAY_S = time(12, 0, 0).strftime('%H:%M:%S')
 
@@ -72,6 +72,18 @@ def updateMovieSessions():
 
             session_entry.save()
 
+def haversine_distance(c1, c2):
+    """ Calculate the distance between two points on a spherical surface
+    :param: Point 1
+    :param: Point 2
+    """
+    r = 6371e3 #Earth's radius (km)
+    hav1 = math.sin((c2[0] - c1[0])/2)**2
+    hav2 = math.sin((c2[1] - c1[1])/2)**2
+    h = math.sqrt(hav1 + math.cos(c1[0])*math.cos(c2[0])*hav2)
+
+    return 2*r*math.asin(h)
+            
 
 def closest_cinema(coordinates=[]):
     cinemas = Cinema.objects.all()

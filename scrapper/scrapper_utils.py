@@ -105,14 +105,12 @@ def getSchedule(schedule_html):
             for session in sessions:
                 hours = re.sub(r'\s+.*', '', session.get_text().strip())
                 link = session['href']
-                available_seats = getSessionAvailability(link)
                 session_object = {
                         'cinema': cinema,
                         'room': re.sub(r'Sala ', '', room),
                         'date': day,
                         'hours': hours,
-                        'purchase_link': link,
-                        'availability': 0 #available_seats
+                        'purchase_link': link
                 }
                 sessions_objects.append(session_object)
                 
@@ -135,13 +133,12 @@ def getNextDebuts():
 
     return movies_objects
 
-
+'''
 def getSessionAvailability(link):
     """ Get number of available seats for a given session
     :param: Link to purchase ticket for a session
     :return: number of available seats
     """
-    return 0
     r = requests.get(link)
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
@@ -154,13 +151,4 @@ def getSessionAvailability(link):
                 if tmp:
                     return int(tmp.get_text())
     return 0
-
-def distance(p1X,p1Y,p2X,p2Y):
-    """ Get distance between 2 localizations based on both coordinates 
-    :param: X of first localization
-    :param: Y of first localization
-    :param: X of second localization
-    :param: T of second localization
-    """
-    dist = math.sqrt( ((p1X-p2X)**2)+((p1Y-p2Y)**2) )
-    return dist 
+'''

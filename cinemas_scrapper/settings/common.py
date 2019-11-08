@@ -110,6 +110,10 @@ MOVIES_LINK = NOS_CINEMAS_URL + '/pages/cartaz.aspx'
 MAX_DISTANCE = 20# Km
 
 
+# CURRENT DATABASE TO USE
+CURRENT_DB = 'default'
+
+
 # Celery Settings
 CELERY_BROKER_URL = 'redis://localhost:6379'
 CELERY_RESULT_BACKEND = 'redis://localhost'
@@ -120,6 +124,6 @@ CELERY_ENABLE_UTC = True
 CELERY_BEAT_SCHEDULE = {
     'update-database': {
         'task': 'scrapper.request_handler.updateMovieSessions',
-        'schedule': timedelta(minutes=5),
+        'schedule': timedelta(minutes=2),
     }
 }

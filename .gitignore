@@ -111,3 +111,6 @@ venv.bak/
 **/#**#
 **/*.*~
 **/.#*
+
+**/*.sqlite3
+celerybeat-schedule.db

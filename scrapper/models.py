@@ -14,8 +14,6 @@ class Session(models.Model):
     """
     start_date = models.DateField()
     start_time = models.TimeField()
-    availability = models.IntegerField()
-    technology = models.CharField(max_length=32)
     room = models.CharField(max_length=32)
     purchase_link = models.CharField(max_length=256) #TODO: max length
     movie = models.ForeignKey(

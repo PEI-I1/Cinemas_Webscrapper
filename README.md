@@ -1,8 +1,23 @@
 # Cinemas Webscrapper
 
-## Functional Requirements
+## Table of Contents
+* [What is it?](#what-is-it)
+  - [Features](#features)
+* [Usage](#usage)
+  - [Development setup](#development-setup)
+  - [Deployment](#deployment)
+* [Architecture](#architecture)
+  - [Database ER diagram](#database-er-diagram)
+  - [API](#api)
 
-The API provided by this service must allow:
+## What is it?
+Cinemas webscrapper is scrapper developed with the aim of retrieving information related
+to cinemas, movies and sessions regarding Cinemas NOS. It integrates a chat bot developed
+with the aim of improving the customer assistance provided by ISPs, NOS in this case, by
+aggregating most of their customer services in a single endpoint.
+
+### Features
+The API provided by this service allows:
 * Retrieve list of sessions based on current date and location
 * Retrieve next movies based on location
 * Get movie suggestions based on duration
@@ -15,15 +30,10 @@ The API provided by this service must allow:
 * Retrieve of upcoming releases
 * Retrieve movie details
 * Retrieve next sessions based on movie, date, location
-* ...
 
-## Database ER diagram
-![Database model](static/doc/Cinemas_NOS_DB_EN.png)
 
 ## Usage
-
-#### Setup
-
+#### Development Setup
 * Install *Django* dependencies:
 `pip install -r requirements.txt --user`
 * Install *Docker*
@@ -32,7 +42,6 @@ The API provided by this service must allow:
 * Import static data:
 `./manage.py loaddata static/cinemas_fixture.json`
 `./manage.py loaddata --database=default_2 static/cinemas_fixture.json`
-
 * Run *Django* project:
 `./manage.py runserver`
 * Run *Redis* back-end
@@ -40,7 +49,15 @@ The API provided by this service must allow:
 * Run *Celery* (for periodic database update):
 `celery -A cinemas_scrapper.celery worker -B -l INFO`
 
-#### API
+### Deployment
+(instructions go here)
+
+
+## Architecture
+### Database ER diagram
+![Database model](static/doc/Cinemas_NOS_DB_EN.png)
+
+### API
 
 * Search for movies in cinema
 
@@ -159,4 +176,5 @@ GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&time=<>
 | `time` | `Hours:Minutes:Seconds` | **Optional**. Time. |
 
 ------
-***Note**: The methods related to sessions require `search_term` or in alternative `lat` and `lon`, so that the desired or close cinemas can be obtained.
+***Note**: The methods related to sessions require `search_term` or in alternative `lat` and `lon`, so 
+that the desired or closest cinemas can be obtained.

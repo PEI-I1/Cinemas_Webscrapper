@@ -11,7 +11,7 @@ https://docs.djangoproject.com/en/2.2/ref/settings/
 """
 
 import os
-from datetime import timedelta
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -107,23 +107,4 @@ STATIC_URL = '/static/'
 # Scrapper settings
 NOS_CINEMAS_URL = 'http://cinemas.nos.pt'
 MOVIES_LINK = NOS_CINEMAS_URL + '/pages/cartaz.aspx'
-MAX_DISTANCE = 20# Km
-
-
-# CURRENT DATABASE TO USE
-CURRENT_DB = 'default'
-
-
-# Celery Settings
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost'
-CELERY_IMPORT = ('scrapper.request_handler')
-CELERY_TASK_IGNORE_RESULT = True
-CELERY_TIMEZONE = "Europe/Lisbon"
-CELERY_ENABLE_UTC = True
-CELERY_BEAT_SCHEDULE = {
-    'update-database': {
-        'task': 'scrapper.request_handler.updateMovieSessions',
-        'schedule': timedelta(minutes=2),
-    }
-}
+MAX_DISTANCE = 20

@@ -32,7 +32,7 @@ def get_movies_by_cinema(request):
 
 
 def get_sessions_by_duration(request):
-    """ Search for sessions of movies under a certain duration
+    """ Search for sessions for movies under a certain duratio
     """
     duration = request.GET.get('duration', '')
     if not duration:
@@ -106,7 +106,7 @@ def get_sessions_by_date(request):
 
 
 def search_movies(request):
-    """ Search for movies based on genre, producer, cast, synopsis and age restriction
+    """ Search for movies based on genre, producer, cast, synopsis, age restriction
     """
     genre = request.GET.get('genre', '')
     producer = request.GET.get('producer', '')

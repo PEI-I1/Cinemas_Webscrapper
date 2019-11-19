@@ -59,9 +59,7 @@ The API provided by this service allows:
 
 ### API
 <details>
-<summary>
-* Search for movies in cinema
-</summary>
+<summary>Search for movies in cinema</summary>
 ```http
 GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
 ```
@@ -76,7 +74,8 @@ GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
 
 <!---------------------------------------------------->
 
-* Search for movies based on genre, producer, cast, synopsis and age restriction
+<details>
+<summary>Search for movies based on genre, producer, cast, synopsis and age restriction</summary>
 
 ```http
 GET /movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
@@ -93,6 +92,8 @@ GET /movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
 **Note**: All parameters are optional but at least one of them needs to be provided.
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
 * Search for upcoming movies

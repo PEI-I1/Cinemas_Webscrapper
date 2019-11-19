@@ -109,7 +109,8 @@ GET /movies/releases
 
 <!---------------------------------------------------->
 
-* Get details of movie
+<details>
+<summary>Get details of movie</summary>
 
 ```http
 GET /movies/details?movie=<>
@@ -120,9 +121,12 @@ GET /movies/details?movie=<>
 | `movie` | `string` | **Required**. Name of the movie. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
-* Search for sessions of movies under a certain duration
+<details>
+<summary>Search for sessions of movies under a certain duration</summary>
 
 ```http
 GET /sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=<>
@@ -137,9 +141,12 @@ GET /sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=
 | `time` | `Hours:Minutes:Seconds` | **Optional** Time. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
-* Search for the next sessions
+<details>
+<summary>Search for the next sessions</summary>
 
 ```http
 GET /sessions/next_sessions?search_term=<>&lat=<>&lon=<>
@@ -151,9 +158,12 @@ GET /sessions/next_sessions?search_term=<>&lat=<>&lon=<>
 | `lat` and `lon` | `float` | **Optional***. User location. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
-* Search sessions for a given movie
+<details>
+<summary>Search sessions for a given movie</summary>
 
 ```http
 GET /sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
@@ -168,9 +178,12 @@ GET /sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
 | `time` | `Hours:Minutes:Seconds` | **Optional** Time. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
-* Search for sessions by date
+<details>
+<summary>Search for sessions by date</summary>
 
 ```http
 GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&time=<>
@@ -184,5 +197,8 @@ GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&time=<>
 | `time` | `Hours:Minutes:Seconds` | **Optional**. Time. |
 
 ------
-***Note**: The methods related to sessions require `search_term` or in alternative `lat` and `lon`, so 
-that the desired or closest cinemas can be obtained.
+</details>
+
+<br/>
+
+***Note**: The methods related to sessions require `search_term` or in alternative `lat` and `lon`, so that the desired or closest cinemas can be obtained.

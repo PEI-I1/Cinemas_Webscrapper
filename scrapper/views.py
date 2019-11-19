@@ -6,7 +6,6 @@ from .models import *
 import json
 from datetime import datetime, time
 
-# [41.5807204, -8.4293997]
 # lat=41.5807204&lon=-8.4293997
 
 # Create your views here.
@@ -15,6 +14,19 @@ def update_DB(request):
     res = { 'success': True }
     res_as_json = json.dumps(res)
     return HttpResponse(res_as_json, content_type='json')
+
+def get_matching_cinemas(request):
+    search_term = request.GET.get('search_term', '')
+    lat = request.GET.get('lat', '')
+    lon = request.GET.get('lon', '')
+    if lat and lon:
+        cinemas_as_json = json.dumps(request_handler.search_cinemas(coordinates=[float(lat), float(lon)]))
+    elif search_term:
+        cinemas_as_json = json.dumps(request_handler.search_cinemas(search_term=search_term))
+    else:
+        cinemas_as_json = json.dumps({'error': 'Bad parameters'})
+    return HttpResponse(cinemas_as_json, content_type='json')
+
 
 def get_movies_by_cinema(request):
     """ Search for movies in given cinema

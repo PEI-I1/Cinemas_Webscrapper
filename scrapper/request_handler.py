@@ -16,10 +16,6 @@ MID_DAY_S = time(12, 0, 0).strftime('%H:%M:%S')
 def updateMovieSessions(self):
     """ Fetch the latest session and movie info to update the database
     """
-    if settings.CURRENT_DB == 'default':
-        db = 'default_2'
-    else:
-        db = 'default'
     print("Updating database")
     movie_dump = getMovies()
     debuts_dump = getNextDebuts()
@@ -29,18 +25,18 @@ def updateMovieSessions(self):
 
     for movie in movie_dump:
         
-        age_rating = AgeRating.objects.using(db).all().filter(age = movie['age'])
+        age_rating = AgeRating.objects.all().filter(age = movie['age'])
         if len(age_rating) == 0:
             age_rating = AgeRating(age = movie['age'])
-            age_rating.save(using=db)
+            age_rating.save()
             print('NOVA IDADE ADICIONADA')
         else:
             age_rating = age_rating[0]
         
-        genre = Genre.objects.using(db).all().filter(name = movie['genre'])
+        genre = Genre.objects.all().filter(name = movie['genre'])
         if len(genre) == 0:
             genre = Genre(name = movie['genre'])
-            genre.save(using=db)
+            genre.save()
             print('NOVO GÉNERO ADICIONADO')
         else:
             genre = genre[0]
@@ -59,15 +55,15 @@ def updateMovieSessions(self):
             genre = genre
         )
         
-        movie_entry.save(using=db)
+        movie_entry.save()
 
         for session in movie['sessions']:
 
-            cinema = Cinema.objects.using(db).all().filter(name = session['cinema'])
+            cinema = Cinema.objects.all().filter(name = session['cinema'])
             if len(cinema) > 0:
                 cinema = cinema[0]
             else:
-                cinema = Cinema.objects.using(db).all().filter(alt_name = session['cinema'])[0]
+                cinema = Cinema.objects.all().filter(alt_name = session['cinema'])[0]
 
             session_entry = Session(
                 start_date = datetime.strptime(session['date'], '%Y-%m-%d'),
@@ -78,9 +74,8 @@ def updateMovieSessions(self):
                 cinema = cinema
             )
 
-            session_entry.save(using=db)
+            session_entry.save()
 
-    settings.configure(CURRENT_DB=db)
     print("Update complete")
             
 '''
@@ -112,7 +107,7 @@ def closest_cinemas(coordinates=[]):
     """ Find the cinemas that are closest to the given coordinates
     :param: users location
     """
-    cinemas = Cinema.objects.using(settings.CURRENT_DB).all()
+    cinemas = Cinema.objects.all()
     closest_cinemas = []
     for cinema in cinemas:
         cinema_coordinates = cinema.coordinates.strip().split(',', 1)
@@ -126,7 +121,7 @@ def find_cinemas(search_term=""):
     """ Find cinemas that match the search term
     :param: string/term to look for
     """
-    cinemas = Cinema.objects.using(settings.CURRENT_DB).all()
+    cinemas = Cinema.objects.all()
     cinemas_response = []
     for cinema in cinemas:
         st = search_term.lower()
@@ -140,14 +135,12 @@ def movies_of_cinemas(cinemas_coordinates):
     :param: coordinates corresponding to the cinemas location
     """
     cinemas = Cinema.objects \
-                    .using(settings.CURRENT_DB) \
                     .values_list('coordinates', 'name') \
                     .filter(coordinates__in=cinemas_coordinates)
     res = {}
 
     for cinema in cinemas:
         movie_titles = list(set(Session.objects \
-                                       .using(settings.CURRENT_DB) \
                                        .filter(cinema=cinema[0]) \
                                        .values_list('movie', flat=True)))
         res[cinema[1]] = movie_titles
@@ -176,6 +169,15 @@ def get_matching_cinemas(search_term="", coordinates = []):
         cinemas = closest_cinemas(coordinates)
     return cinemas
 
+
+def search_cinemas(search_term="", coordinates = []):
+    """ Get all cinemas matching the search parameters (API facing)
+    :param: query for cinema
+    :param: cinema coordinates
+    :return: list of cinema's names
+    """
+    cinemas_names = [name for (coordinates, name) in get_matching_cinemas(search_term, coordinates)]
+    return {'cinemas': cinemas_names}
 
 def get_sessions_by_date(date, time, search_term="", coordinates=[]):
     """ Search for all sessions in a specific cinema after a given date-time
@@ -209,7 +211,6 @@ def filter_sessions_by_datetime(date, time, search_term="", coordinates=[]):
     """
     cinemas = get_matching_cinemas(search_term, coordinates)
     sessions = Session.objects \
-                      .using(settings.CURRENT_DB) \
                       .filter(start_date=date,
                               cinema__in=[cinema[0] for cinema in cinemas])
     
@@ -226,7 +227,6 @@ def get_sessions_by_duration(duration, date, time, search_term = "", coordinates
     """
     sessions = filter_sessions_by_datetime(date, time, search_term, coordinates)
     movies_ud = Movie.objects \
-                     .using(settings.CURRENT_DB) \
                      .filter(length__lte=duration) \
                      .values_list('original_title')
     sessions = sessions.filter(movie__in=movies_ud).values_list('start_date',
@@ -314,7 +314,7 @@ def search_movies(genre, producer, cast, synopsis, age):
     :param: synopsis/details of the movie given by the costumer
     :param: age limit requested by the costumer
     """
-    movies = Movie.objects.using(settings.CURRENT_DB).filter(
+    movies = Movie.objects.filter(
         genre__name__icontains=genre,
         producer__icontains=producer,
         age_rating_id__lte=age
@@ -332,7 +332,7 @@ def search_movies(genre, producer, cast, synopsis, age):
 def upcoming_releases():
     """ List upcoming releases
     """
-    movies = Movie.objects.using(settings.CURRENT_DB).filter(released=False)
+    movies = Movie.objects.filter(released=False)
     return movies_queryset_to_array(movies)
 
 
@@ -341,7 +341,6 @@ def get_movie_details(movie):
     :param: movie query
     """
     movies = Movie.objects \
-                  .using(settings.CURRENT_DB) \
                   .filter(Q(original_title__icontains=movie) | Q(title_pt__icontains=movie)).values_list('original_title')
     return movies_queryset_to_array(movies, full_description=True)
 
@@ -355,7 +354,6 @@ def get_sessions_by_movie(date, time, movie, search_term="", coordinates=[]):
     :param: user location
     """
     movies_matched = Movie.objects \
-                          .using(settings.CURRENT_DB) \
                           .filter(Q(original_title__icontains=movie) | Q(title_pt__icontains=movie)).values_list('original_title')
     
     sessions = filter_sessions_by_datetime(date, time, search_term, coordinates) \

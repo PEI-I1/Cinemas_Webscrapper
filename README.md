@@ -60,6 +60,7 @@ The API provided by this service allows:
 ### API
 <details>
 <summary>Search for movies in cinema</summary>
+
 ```http
 GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
 ```
@@ -95,14 +96,17 @@ GET /movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
 </details>
 
 <!---------------------------------------------------->
-
-* Search for upcoming movies
+<details>
+<summary>Search for upcoming movies</summary>
 
 ```http
 GET /movies/releases
 ```
 
 ------
+
+</details>
+
 <!---------------------------------------------------->
 
 * Get details of movie

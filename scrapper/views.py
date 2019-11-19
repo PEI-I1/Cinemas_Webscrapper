@@ -54,11 +54,17 @@ def get_sessions_by_duration(request):
         lat = request.GET.get('lat', '')
         lon = request.GET.get('lon', '')
         start_date = request.GET.get('date', datetime.now().strftime('%Y-%m-%d'))
-        start_time = request.GET.get('time', time(12, 0, 0).strftime('%H:%M:%S'))
+        start_time = request.GET.get('start_time', datetime.now().strftime('%H:%M:%S'))
         if lat and lon:
-            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(date=start_date, time=start_time, duration=int(duration), coordinates=[float(lat), float(lon)]))
+            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(date=start_date,
+                                                                                   time=start_time,
+                                                                                   duration=int(duration),
+                                                                                   coordinates=[float(lat), float(lon)]))
         elif search_term:
-            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(date=start_date, time=start_time, duration=int(duration), search_term=search_term))
+            sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(date=start_date,
+                                                                                   time=start_time,
+                                                                                   duration=int(duration),
+                                                                                   search_term=search_term))
         else:
             sessions_as_json = json.dumps({'error': 'Bad parameters'})
     return HttpResponse(sessions_as_json, content_type='json')
@@ -107,11 +113,18 @@ def get_sessions_by_date(request):
     lat = request.GET.get('lat', '')
     lon = request.GET.get('lon', '')
     start_date = request.GET.get('date', datetime.now().strftime('%Y-%m-%d'))
-    start_time = request.GET.get('time', time(12, 0, 0).strftime('%H:%M:%S'))
+    start_time = request.GET.get('start_time', datetime.now().strftime('%H:%M:%S'))
+    end_time = request.GET.get('end_time', time(12, 0, 0).strftime('%H:%M:%S'))
     if lat and lon:
-        sessions_as_json = json.dumps(request_handler.get_sessions_by_date(date=start_date, time=start_time, coordinates=[float(lat), float(lon)]))
+        sessions_as_json = json.dumps(request_handler.get_sessions_by_date(date=start_date,
+                                                                           start_time=start_time,
+                                                                           end_time=end_time,
+                                                                           coordinates=[float(lat), float(lon)]))
     elif search_term:
-        sessions_as_json = json.dumps(request_handler.get_sessions_by_date(date=start_date, time=start_time, search_term=search_term))
+        sessions_as_json = json.dumps(request_handler.get_sessions_by_date(date=start_date,
+                                                                           start_time=start_time,
+                                                                           end_time=end_time,
+                                                                           search_term=search_term))
     else:
         sessions_as_json = json.dumps({'error': 'Bad parameters'})
     return HttpResponse(sessions_as_json, content_type='json')

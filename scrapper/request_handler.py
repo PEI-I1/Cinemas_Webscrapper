@@ -179,18 +179,18 @@ def search_cinemas(search_term="", coordinates = []):
     cinemas_names = [name for (coordinates, name) in get_matching_cinemas(search_term, coordinates)]
     return {'cinemas': cinemas_names}
 
-def get_sessions_by_date(date, time, search_term="", coordinates=[]):
+def get_sessions_by_date(date, start_time, end_time, search_term="", coordinates=[]):
     """ Search for all sessions in a specific cinema after a given date-time
     :param: date of the sessions to search for
     :param: minimum start time for the sessions
     :param: query for the cinema
     :param: user location
     """
-    sessions = filter_sessions_by_datetime(date, time, search_term, coordinates).values_list('start_date',
-                                                                                             'start_time',
-                                                                                             'purchase_link',
-                                                                                             'cinema__name',
-                                                                                             'movie')
+    sessions = filter_sessions_by_datetime(date, start_time, end_time, search_term, coordinates).values_list('start_date',
+                                                                                                              'start_time',
+                                                                                                              'purchase_link',
+                                                                                                              'cinema__name',
+                                                                                                              'movie')
     res = {}
     for session in sessions:
         session_object = {'Start date': str(session[0]),
@@ -201,7 +201,7 @@ def get_sessions_by_date(date, time, search_term="", coordinates=[]):
     return res
     
 
-def filter_sessions_by_datetime(date, time, search_term="", coordinates=[]):
+def filter_sessions_by_datetime(date, start_time, end_time, search_term="", coordinates=[]):
     """ Filter all sessions taking place after a specific date and time
     in specific cinemas
     :param: date of the sessions to search for
@@ -213,8 +213,12 @@ def filter_sessions_by_datetime(date, time, search_term="", coordinates=[]):
     sessions = Session.objects \
                       .filter(start_date=date,
                               cinema__in=[cinema[0] for cinema in cinemas])
-    
-    return sessions.filter(Q(start_time__gte=time) | Q(start_time__lte = MID_DAY_S))
+
+    if((start_time <= MID_DAY_S and end_time <= MID_DAY_S) or
+       (start_time > MID_DAY_S and start_time < "24:00:00" and end_time > MID_DAY_S and end_time < "24:00:00")):
+        return sessions.filter(Q(start_time__gte=start_time) & Q(start_time__lte = end_time))
+    elif(start_time < "24:00:00"):
+        return sessions.filter(Q(start_time__gte=start_time) | Q(start_time__lte = end_time))
 
 
 def get_sessions_by_duration(duration, date, time, search_term = "", coordinates = []):
@@ -225,7 +229,7 @@ def get_sessions_by_duration(duration, date, time, search_term = "", coordinates
     :param: query for the cinema
     :param: user location
     """
-    sessions = filter_sessions_by_datetime(date, time, search_term, coordinates)
+    sessions = filter_sessions_by_datetime(date, time, MID_DAY_S, search_term, coordinates)
     movies_ud = Movie.objects \
                      .filter(length__lte=duration) \
                      .values_list('original_title')
@@ -259,11 +263,11 @@ def next_sessions(search_term="", coordinates=[]):
     
     current_date = now.strftime("%Y-%m-%d")
 
-    sessions = filter_sessions_by_datetime(current_date, current_time, search_term, coordinates).values_list('movie',
-                                                                                                             'start_date',
-                                                                                                             'start_time',
-                                                                                                             'purchase_link',
-                                                                                                             'cinema__name')
+    sessions = filter_sessions_by_datetime(current_date, current_time, MID_DAY_S, search_term, coordinates).values_list('movie',
+                                                                                                                        'start_date',
+                                                                                                                        'start_time',
+                                                                                                                        'purchase_link',
+                                                                                                                        'cinema__name')
 
     res = {}
     for session in sessions:
@@ -356,7 +360,7 @@ def get_sessions_by_movie(date, time, movie, search_term="", coordinates=[]):
     movies_matched = Movie.objects \
                           .filter(Q(original_title__icontains=movie) | Q(title_pt__icontains=movie)).values_list('original_title')
     
-    sessions = filter_sessions_by_datetime(date, time, search_term, coordinates) \
+    sessions = filter_sessions_by_datetime(date, time, MID_DAY_S, search_term, coordinates) \
                 .filter(movie__in=movies_matched) \
                 .values_list('movie', 'start_date', 'start_time', 'purchase_link', 'cinema__name')
 

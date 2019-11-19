@@ -62,7 +62,7 @@ The API provided by this service allows:
 <summary>Search for cinemas or get the closest ones</summary>
 
 ```http
-GET /cinemas/search?search_term=<>&lat=<>&lon=<>
+GET /scrapper/cinemas/search?search_term=<>&lat=<>&lon=<>
 ```
 
 | Parameter | Type | Description |
@@ -82,7 +82,7 @@ GET /cinemas/search?search_term=<>&lat=<>&lon=<>
 <summary>Search for movies in cinema</summary>
 
 ```http
-GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
+GET /scrapper/movies/by_cinema?search_term=<>&lat=<>&lon=<>
 ```
 
 | Parameter | Type | Description |
@@ -99,7 +99,7 @@ GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
 <summary>Search for movies based on genre, producer, cast, synopsis and age restriction</summary>
 
 ```http
-GET /movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
+GET /scrapper/movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
 ```
 
 | Parameter | Type | Description |
@@ -120,7 +120,7 @@ GET /movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
 <summary>Search for upcoming movies</summary>
 
 ```http
-GET /movies/releases
+GET /scrapper/movies/releases
 ```
 
 ------
@@ -133,7 +133,7 @@ GET /movies/releases
 <summary>Get details of movie</summary>
 
 ```http
-GET /movies/details?movie=<>
+GET /scrapper/movies/details?movie=<>
 ```
 
 | Parameter | Type | Description |
@@ -149,7 +149,7 @@ GET /movies/details?movie=<>
 <summary>Search for sessions of movies under a certain duration</summary>
 
 ```http
-GET /sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=<>
+GET /scrapper/sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=<>
 ```
 
 | Parameter | Type | Description |
@@ -169,7 +169,7 @@ GET /sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=
 <summary>Search for the next sessions</summary>
 
 ```http
-GET /sessions/next_sessions?search_term=<>&lat=<>&lon=<>
+GET /scrapper/sessions/next_sessions?search_term=<>&lat=<>&lon=<>
 ```
 
 | Parameter | Type | Description |
@@ -186,7 +186,7 @@ GET /sessions/next_sessions?search_term=<>&lat=<>&lon=<>
 <summary>Search sessions for a given movie</summary>
 
 ```http
-GET /sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
+GET /scrapper/sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
 ```
 
 | Parameter | Type | Description |
@@ -206,7 +206,7 @@ GET /sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
 <summary>Search for sessions by date</summary>
 
 ```http
-GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&start_time=<>&end_time=<>
+GET /scrapper/sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&start_time=<>&end_time=<>
 ```
 
 | Parameter | Type | Description |

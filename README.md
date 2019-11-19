@@ -59,6 +59,26 @@ The API provided by this service allows:
 
 ### API
 <details>
+<summary>Search for cinemas or get the closest ones</summary>
+
+```http
+GET /cinemas/search?search_term=<>&lat=<>&lon=<>
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `search_term` | `string` | **Optional***. Cinema query. |
+| `lat` and `lon` | `float` | **Optional***. User location. |
+
+
+**Note**: When values are given to `lat` and `lon` the returned cinemas are in a maximum distance of 20 km.
+
+------
+</details>
+
+<!---------------------------------------------------->
+
+<details>
 <summary>Search for movies in cinema</summary>
 
 ```http
@@ -186,7 +206,7 @@ GET /sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
 <summary>Search for sessions by date</summary>
 
 ```http
-GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&time=<>
+GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&start_time=<>&end_time=<>
 ```
 
 | Parameter | Type | Description |
@@ -194,7 +214,8 @@ GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&time=<>
 | `search_term` | `string` | **Optional***. Cinema query. |
 | `lat` and `lon` | `float` | **Optional***. User location. |
 | `date` | `Year-Month-Day` | **Optional**. Date. |
-| `time` | `Hours:Minutes:Seconds` | **Optional**. Time. |
+| `start_time` | `Hours:Minutes:Seconds` | **Optional**. Lower time limit for the beginning of the sessions. |
+| `end_time` | `Hours:Minutes:Seconds` | **Optional**. Upper time limit for the beginning of the sessions. |
 
 ------
 </details>

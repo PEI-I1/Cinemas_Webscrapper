@@ -58,9 +58,10 @@ The API provided by this service allows:
 ![Database model](static/doc/Cinemas_NOS_DB_EN.png)
 
 ### API
-
+<details>
+<summary>
 * Search for movies in cinema
-
+</summary>
 ```http
 GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
 ```
@@ -71,6 +72,8 @@ GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
 | `lat` and `lon` | `float` | **Optional***. User location. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
 * Search for movies based on genre, producer, cast, synopsis and age restriction

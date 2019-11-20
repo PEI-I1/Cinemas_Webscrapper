@@ -23,6 +23,9 @@ def updateMovieSessions(self):
     for debut in debuts_dump:
         movie_dump.append(debut)
 
+    movies_array = []
+    sessions_array = []
+
     for movie in movie_dump:
         
         age_rating = AgeRating.objects.all().filter(age = movie['age'])
@@ -55,7 +58,8 @@ def updateMovieSessions(self):
             genre = genre
         )
         
-        movie_entry.save()
+        movies_array.append(movie_entry)
+        #movie_entry.save()
 
         for session in movie['sessions']:
 
@@ -68,14 +72,18 @@ def updateMovieSessions(self):
             session_entry = Session(
                 start_date = datetime.strptime(session['date'], '%Y-%m-%d'),
                 start_time = datetime.strptime(session['hours'], '%Hh%M'),
-                room = session['room'],
                 purchase_link = session['purchase_link'],
                 movie = movie_entry,
                 cinema = cinema
             )
 
-            session_entry.save()
+            sessions_array.append(session_entry)
+            #session_entry.save()
 
+    Session.objects.all().delete()
+    Movie.objects.all().delete()
+    Movie.objects.bulk_create(movies_array, ignore_conflicts=True)
+    Session.objects.bulk_create(sessions_array, ignore_conflicts=True)
     print("Update complete")
             
 '''

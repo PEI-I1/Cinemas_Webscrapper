@@ -100,14 +100,12 @@ def getSchedule(schedule_html):
         sessions_line = day_schedule.find_all('article', {'class': 'line'})
         for session_line in sessions_line:
             cinema = session_line.find('div', {'class': 'cinema'}).get_text().strip()
-            room = session_line.find('div', {'class': 'room'}).get_text().strip()
             sessions = session_line.find('div', {'class': 'hours'}).find_all('a')
             for session in sessions:
                 hours = re.sub(r'\s+.*', '', session.get_text().strip())
                 link = session['href']
                 session_object = {
                         'cinema': cinema,
-                        'room': re.sub(r'Sala ', '', room),
                         'date': day,
                         'hours': hours,
                         'purchase_link': link

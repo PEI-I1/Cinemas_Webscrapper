@@ -14,3 +14,12 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+# Celery update database task
+
+CELERY_BEAT_SCHEDULE = {
+    'update-database': {
+        'task': 'scrapper.request_handler.updateMovieSessions',
+        'schedule': timedelta(minutes=2),
+    }
+}

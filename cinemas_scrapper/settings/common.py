@@ -117,9 +117,3 @@ CELERY_IMPORT = ('scrapper.request_handler')
 CELERY_TASK_IGNORE_RESULT = True
 CELERY_TIMEZONE = "Europe/Lisbon"
 CELERY_ENABLE_UTC = True
-CELERY_BEAT_SCHEDULE = {
-    'update-database': {
-        'task': 'scrapper.request_handler.updateMovieSessions',
-        'schedule': timedelta(minutes=2),
-    }
-}

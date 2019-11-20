@@ -59,7 +59,6 @@ def updateMovieSessions(self):
         )
         
         movies_array.append(movie_entry)
-        #movie_entry.save()
 
         for session in movie['sessions']:
 
@@ -78,7 +77,6 @@ def updateMovieSessions(self):
             )
 
             sessions_array.append(session_entry)
-            #session_entry.save()
 
     Session.objects.all().delete()
     Movie.objects.all().delete()

@@ -7,7 +7,7 @@ import math
 from celery import shared_task, task
 from .models import *
 from datetime import datetime
-from multiprocessing import Process
+import billiard as multiprocessing
 
 def getMovies():
     r = requests.get(settings.MOVIES_LINK)
@@ -136,9 +136,11 @@ def getNextDebuts():
 
 @task(bind=True)
 def updateSessionsAvailability(self):
+    print('Update started...')
     purchase_links = Session.objects.all().values_list('purchase_link', flat=True)
-    p = Pool(15)
-    print(p.map(getSessionAvailability, purchase_links))
+    p = multiprocessing.Pool(processes=15)
+    p.map(getSessionAvailability, purchase_links)
+    print('Update completed!')
 
 
 def getSessionAvailability(link):
@@ -157,7 +159,9 @@ def getSessionAvailability(link):
                 tmp = tmp.find('span', {'class': 'number'})
                 if tmp:
                     availability = int(tmp.get_text())
-                    session = Session.objects.get(purchase_link=link).update(availability=availability)
+                    session = Session.objects.get(purchase_link=link)
+                    session.availability = availability
+                    session.save()
 
 
 @task(bind=True)

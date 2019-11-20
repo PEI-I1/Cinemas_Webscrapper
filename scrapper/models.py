@@ -15,7 +15,7 @@ class Session(models.Model):
     purchase_link = models.CharField(max_length=256, primary_key=True)
     start_date = models.DateField()
     start_time = models.TimeField()
-    availability = models.IntegerField()
+    availability = models.IntegerField(default=0)
     movie = models.ForeignKey(
         'Movie',
         on_delete=models.CASCADE,

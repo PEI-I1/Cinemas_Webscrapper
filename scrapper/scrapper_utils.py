@@ -3,7 +3,11 @@ import requests
 import re
 from bs4 import BeautifulSoup
 import json
-import math 
+import math
+from celery import shared_task, task
+from .models import *
+from datetime import datetime
+from multiprocessing import Process
 
 def getMovies():
     r = requests.get(settings.MOVIES_LINK)
@@ -15,7 +19,6 @@ def getMovies():
         for movie in movies:
             m = getMovie(settings.NOS_CINEMAS_URL + movie['href'], False)
             movies_objects.append(m)
-        #getMovie(settings.NOS_CINEMAS_URL + movies[0]['href'])
 
     else:
         print("Não foi possível obter a lista de filmes")
@@ -24,7 +27,6 @@ def getMovies():
 
 def getMovie(movie_link, debut):
     r = requests.get(movie_link)
-    #print(movie_link)
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
         details = soup.find('section', {'class': 'details container--fixed'})
@@ -131,7 +133,14 @@ def getNextDebuts():
 
     return movies_objects
 
-'''
+
+@task(bind=True)
+def updateSessionsAvailability(self):
+    purchase_links = Session.objects.all().values_list('purchase_link', flat=True)
+    p = Pool(15)
+    print(p.map(getSessionAvailability, purchase_links))
+
+
 def getSessionAvailability(link):
     """ Get number of available seats for a given session
     :param: Link to purchase ticket for a session
@@ -147,6 +156,79 @@ def getSessionAvailability(link):
             if tmp:
                 tmp = tmp.find('span', {'class': 'number'})
                 if tmp:
-                    return int(tmp.get_text())
-    return 0
-'''
+                    availability = int(tmp.get_text())
+                    session = Session.objects.get(purchase_link=link).update(availability=availability)
+
+
+@task(bind=True)
+def updateMovieSessions(self):
+    """ Fetch the latest session and movie info to update the database
+    """
+    print("Updating database")
+    movie_dump = getMovies()
+    debuts_dump = getNextDebuts()
+
+    for debut in debuts_dump:
+        movie_dump.append(debut)
+
+    movies_array = []
+    sessions_array = []
+
+    for movie in movie_dump:
+        
+        age_rating = AgeRating.objects.all().filter(age = movie['age'])
+        if len(age_rating) == 0:
+            age_rating = AgeRating(age = movie['age'])
+            age_rating.save()
+            print('NOVA IDADE ADICIONADA')
+        else:
+            age_rating = age_rating[0]
+        
+        genre = Genre.objects.all().filter(name = movie['genre'])
+        if len(genre) == 0:
+            genre = Genre(name = movie['genre'])
+            genre.save()
+            print('NOVO GÉNERO ADICIONADO')
+        else:
+            genre = genre[0]
+
+        movie_entry = Movie(
+            original_title = movie['original_title'],
+            title_pt = movie['title'],
+            producer = movie['producer'],
+            cast = movie['actors'],
+            synopsis = movie['synopsis'],
+            length = movie['duration'],
+            trailer_url = movie['trailer_url'],
+            banner_url = movie['banner_url'],
+            released = not movie['debut'],
+            age_rating = age_rating,
+            genre = genre
+        )
+        
+        movies_array.append(movie_entry)
+
+        for session in movie['sessions']:
+
+            cinema = Cinema.objects.all().filter(name = session['cinema'])
+            if len(cinema) > 0:
+                cinema = cinema[0]
+            else:
+                cinema = Cinema.objects.all().filter(alt_name = session['cinema'])[0]
+
+            session_entry = Session(
+                start_date = datetime.strptime(session['date'], '%Y-%m-%d'),
+                start_time = datetime.strptime(session['hours'], '%Hh%M'),
+                purchase_link = session['purchase_link'],
+                movie = movie_entry,
+                cinema = cinema,
+                availability = 0
+            )
+
+            sessions_array.append(session_entry)
+
+    Session.objects.all().delete()
+    Movie.objects.all().delete()
+    Movie.objects.bulk_create(movies_array, ignore_conflicts=True)
+    Session.objects.bulk_create(sessions_array, ignore_conflicts=True)
+    print("Update complete")

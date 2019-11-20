@@ -5,98 +5,10 @@ from datetime import datetime, date, time, timedelta
 from .scrapper_utils import getMovies, getNextDebuts
 from functools import reduce
 import operator
-from celery import shared_task, task
-#import math
 from haversine import haversine, Unit
 
 # MID DAY
 MID_DAY_S = time(12, 0, 0).strftime('%H:%M:%S')
-
-@task(bind=True)
-def updateMovieSessions(self):
-    """ Fetch the latest session and movie info to update the database
-    """
-    print("Updating database")
-    movie_dump = getMovies()
-    debuts_dump = getNextDebuts()
-
-    for debut in debuts_dump:
-        movie_dump.append(debut)
-
-    movies_array = []
-    sessions_array = []
-
-    for movie in movie_dump:
-        
-        age_rating = AgeRating.objects.all().filter(age = movie['age'])
-        if len(age_rating) == 0:
-            age_rating = AgeRating(age = movie['age'])
-            age_rating.save()
-            print('NOVA IDADE ADICIONADA')
-        else:
-            age_rating = age_rating[0]
-        
-        genre = Genre.objects.all().filter(name = movie['genre'])
-        if len(genre) == 0:
-            genre = Genre(name = movie['genre'])
-            genre.save()
-            print('NOVO GÉNERO ADICIONADO')
-        else:
-            genre = genre[0]
-
-        movie_entry = Movie(
-            original_title = movie['original_title'],
-            title_pt = movie['title'],
-            producer = movie['producer'],
-            cast = movie['actors'],
-            synopsis = movie['synopsis'],
-            length = movie['duration'],
-            trailer_url = movie['trailer_url'],
-            banner_url = movie['banner_url'],
-            released = not movie['debut'],
-            age_rating = age_rating,
-            genre = genre
-        )
-        
-        movies_array.append(movie_entry)
-
-        for session in movie['sessions']:
-
-            cinema = Cinema.objects.all().filter(name = session['cinema'])
-            if len(cinema) > 0:
-                cinema = cinema[0]
-            else:
-                cinema = Cinema.objects.all().filter(alt_name = session['cinema'])[0]
-
-            session_entry = Session(
-                start_date = datetime.strptime(session['date'], '%Y-%m-%d'),
-                start_time = datetime.strptime(session['hours'], '%Hh%M'),
-                purchase_link = session['purchase_link'],
-                movie = movie_entry,
-                cinema = cinema
-            )
-
-            sessions_array.append(session_entry)
-
-    Session.objects.all().delete()
-    Movie.objects.all().delete()
-    Movie.objects.bulk_create(movies_array, ignore_conflicts=True)
-    Session.objects.bulk_create(sessions_array, ignore_conflicts=True)
-    print("Update complete")
-            
-'''
-def haversine_distance(c1, c2):
-    """ Calculate the distance between two points on a spherical surface
-    :param: Point 1
-    :param: Point 2
-    """
-    r = 6371e3 #Earth's radius (km)
-    hav1 = math.sin((c2[0] - c1[0])/2)**2
-    hav2 = math.sin((c2[1] - c1[1])/2)**2
-    h = math.sqrt(hav1 + math.cos(c1[0])*math.cos(c2[0])*hav2)
-
-    return 2*r*math.asin(h)
-'''
 
 
 def haversine_distance(c1, c2):

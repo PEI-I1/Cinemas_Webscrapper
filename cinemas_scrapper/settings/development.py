@@ -18,8 +18,12 @@ DATABASES = {
 # Celery update database task
 
 CELERY_BEAT_SCHEDULE = {
-    'update-database': {
-        'task': 'scrapper.request_handler.updateMovieSessions',
-        'schedule': timedelta(minutes=2),
+    #'update-database': {
+    #    'task': 'scrapper.scrapper_utils.updateMovieSessions',
+    #    'schedule': timedelta(minutes=2),
+    #},
+    'update-availability': {
+        'task': 'scrapper.scrapper_utils.updateSessionsAvailability',
+        'schedule': timedelta(minutes=60),
     }
 }

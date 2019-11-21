@@ -19,12 +19,8 @@ DATABASES = {
 # Celery update database task
 
 CELERY_BEAT_SCHEDULE = {
-    #'update-database': {
-    #    'task': 'scrapper.scrapper_utils.updateMovieSessions',
-    #    'schedule': timedelta(minutes=2),
-    #},
-    'update-availability': {
-        'task': 'scrapper.scrapper_utils.updateSessionsAvailability',
-        'schedule': crontab(hour=18, minute=9, day_of_week='wed'),
-    }
+    'update-database': {
+        'task': 'scrapper.scrapper_utils.updateDatabase',
+        'schedule': timedelta(minutes=60),
+    },
 }

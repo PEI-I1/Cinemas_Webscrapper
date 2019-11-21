@@ -24,7 +24,7 @@ DATABASES = {
 
 CELERY_BEAT_SCHEDULE = {
     'update-database': {
-        'task': 'scrapper.scrapper_utils.updateMovieSessions',
-        'schedule': crontab(hour=5, minute=0, day_of_week='thu'),
-    }
+        'task': 'scrapper.scrapper_utils.updateDatabase',
+        'schedule': timedelta(hours=1),
+    },
 }

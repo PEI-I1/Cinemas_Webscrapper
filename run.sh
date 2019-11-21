@@ -5,4 +5,4 @@
 
 redis-server &
 celery -A cinemas_scrapper.celery worker -B -l info &
-./manage.py runserver
+./manage.py runserver 0.0.0.0:8000

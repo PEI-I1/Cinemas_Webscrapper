@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Q
 import requests
 import re
 from bs4 import BeautifulSoup
@@ -134,10 +135,12 @@ def getNextDebuts():
     return movies_objects
 
 
-@task(bind=True)
-def updateSessionsAvailability(self):
+def updateSessionsAvailability(date, time):
     print('Update started...')
-    purchase_links = Session.objects.all().values_list('purchase_link', flat=True)
+    purchase_links = Session.objects \
+                            .filter(Q(start_date__gte=date) and Q(start_time__gte=time)) \
+                            .values_list('purchase_link', flat=True)
+    
     p = multiprocessing.Pool(processes=15)
     p.map(getSessionAvailability, purchase_links)
     print('Update completed!')
@@ -163,9 +166,18 @@ def getSessionAvailability(link):
                     session.availability = availability
                     session.save()
 
-
 @task(bind=True)
-def updateMovieSessions(self):
+def updateDatabase(self):
+    today = datetime.today()
+    time = today.strftime("%H:%M:%S")
+    date = today.strftime("%Y-%m-%d")
+    
+    if today.weekday() == 3 and (time >= '05:00:00' and time < '06:00:00'):
+        updateMovieSessions()
+    updateSessionsAvailability(date, time)
+        
+                    
+def updateMovieSessions():
     """ Fetch the latest session and movie info to update the database
     """
     print("Updating database")

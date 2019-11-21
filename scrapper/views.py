@@ -8,13 +8,6 @@ from datetime import datetime, time
 
 # lat=41.5807204&lon=-8.4293997
 
-# Create your views here.
-def update_DB(request):
-    request_handler.updateMovieSessions()
-    res = { 'success': True }
-    res_as_json = json.dumps(res)
-    return HttpResponse(res_as_json, content_type='json')
-
 def get_matching_cinemas(request):
     search_term = request.GET.get('search_term', '')
     lat = request.GET.get('lat', '')

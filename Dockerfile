@@ -16,6 +16,8 @@ RUN useradd -m -G wheel -s /bin/bash scrapper
 RUN echo 'root:root' | chpasswd
 RUN echo 'scrapper:scrapper' | chpasswd
 
+RUN sed -irs 's/# (%wheel ALL=\(ALL\) ALL)/\1/g' /etc/sudoers
+
 USER scrapper
 
 WORKDIR /home/scrapper
@@ -23,7 +25,7 @@ WORKDIR /home/scrapper
 RUN git clone https://github.com/PEI-I1/Cinemas_Webscrapper.git
 WORKDIR /home/scrapper/Cinemas_Webscrapper
 
-RUN echo 'PATH=$PATH:/home/scrapper/.local/bin' > ../.bashrc
+RUN echo 'PATH=$PATH:/home/scrapper/.local/bin' >> ../.bashrc
 
 RUN pip install -r requirements.txt --user --no-warn-script-location
 

@@ -25,6 +25,6 @@ WORKDIR /home/scrapper/Cinemas_Webscrapper
 
 RUN echo 'PATH=$PATH:/home/scrapper/.local/bin' > ../.bashrc
 
-RUN pip install -r requirements.txt --user
+RUN pip install -r requirements.txt --user --no-warn-script-location
 
 WORKDIR /home/scrapper

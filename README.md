@@ -50,7 +50,12 @@ The API provided by this service allows:
 `celery -A cinemas_scrapper.celery worker -B -l INFO`
 
 ### Deployment
-(instructions go here)
+* Build Docker image
+`docker build -t cinemas_scrapper .`
+* Run Docker container
+`docker run -p 8000:8000 -it cinemas_scrapper`
+* Run script
+`./run.sh`
 
 
 ## Architecture

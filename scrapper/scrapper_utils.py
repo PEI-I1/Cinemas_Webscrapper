@@ -135,14 +135,15 @@ def getNextDebuts():
     return movies_objects
 
 
-def updateSessionsAvailability(date, time):
+def updateSessionsAvailability(date):
     print('Update started...')
     purchase_links = Session.objects \
-                            .filter(Q(start_date__gte=date) and Q(start_time__gte=time)) \
+                            .filter(start_date__gte=date) \
                             .values_list('purchase_link', flat=True)
     
     p = multiprocessing.Pool(processes=15)
-    p.map(getSessionAvailability, purchase_links)
+    sessions_updated = p.map(getSessionAvailability, purchase_links)
+    Session.objects.bulk_update(sessions_updated, ['availability']);
     print('Update completed!')
 
 
@@ -152,6 +153,7 @@ def getSessionAvailability(link):
     :return: number of available seats
     """
     r = requests.get(link)
+    session = Session.objects.get(purchase_link=link)
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
         #available_seats = soup.find('tfoot').find('div', {'class': 'right'}).find('span', {'class': 'number'}).get_text()
@@ -162,9 +164,8 @@ def getSessionAvailability(link):
                 tmp = tmp.find('span', {'class': 'number'})
                 if tmp:
                     availability = int(tmp.get_text())
-                    session = Session.objects.get(purchase_link=link)
                     session.availability = availability
-                    session.save()
+    return session
 
 @task(bind=True)
 def updateDatabase(self):
@@ -174,7 +175,7 @@ def updateDatabase(self):
     
     if today.weekday() == 3 and (time >= '05:00:00' and time < '06:00:00'):
         updateMovieSessions()
-    updateSessionsAvailability(date, time)
+    updateSessionsAvailability(date)
         
                     
 def updateMovieSessions():

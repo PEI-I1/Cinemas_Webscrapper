@@ -1,18 +1,18 @@
-FROM ubuntu:latest
+FROM archlinux:latest
 MAINTAINER PEI-i1
 
-RUN apt-get update && apt-get install -y --force-yes \
+RUN pacman -Syu --noconfirm && pacman -S --noconfirm \
     curl \
     git \
     python \
-    python3-pip \
-    redis-server \
+    python-pip \
+    redis \
     sudo \
     unzip \
     wget \
     vim
 
-RUN useradd --create-home --shell /bin/bash scrapper
+RUN useradd -m -G wheel -s /bin/bash scrapper
 RUN echo 'root:root' | chpasswd
 RUN echo 'scrapper:scrapper' | chpasswd
 
@@ -23,6 +23,8 @@ WORKDIR /home/scrapper
 RUN git clone https://github.com/PEI-I1/Cinemas_Webscrapper.git
 WORKDIR /home/scrapper/Cinemas_Webscrapper
 
-RUN pip3 install -r requirements.txt --user
+RUN echo 'PATH=$PATH:/home/scrapper/.local/bin' > ../.bashrc
+
+RUN pip install -r requirements.txt --user
 
 WORKDIR /home/scrapper

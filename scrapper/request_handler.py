@@ -105,15 +105,17 @@ def get_sessions_by_date(date, start_time, end_time, search_term="", coordinates
     :param: user location
     """
     sessions = filter_sessions_by_datetime(date, start_time, end_time, search_term, coordinates).values_list('start_date',
-                                                                                                              'start_time',
-                                                                                                              'purchase_link',
-                                                                                                              'cinema__name',
-                                                                                                              'movie')
+                                                                                                             'start_time',
+                                                                                                             'availability',                                                                                                             
+                                                                                                             'purchase_link',
+                                                                                                             'cinema__name',
+                                                                                                             'movie')
     res = {}
     for session in sessions:
         session_object = {'Start date': str(session[0]),
                           'Start time': str(session[1]),
-                          'Ticket link': session[2]}
+                          'Availability': str(session[2]),
+                          'Ticket link': session[3]}
         res[session[-2]] = res.get(session[-2], {})
         res[session[-2]][session[-1]] = {'sessions': res[session[-2]].get(session[-1], {'sessions':[]})['sessions'] + [session_object]}
     return res
@@ -153,6 +155,7 @@ def get_sessions_by_duration(duration, date, time, search_term = "", coordinates
                      .values_list('original_title')
     sessions = sessions.filter(movie__in=movies_ud).values_list('start_date',
                                                                 'start_time',
+                                                                'availability',
                                                                 'purchase_link',
                                                                 'cinema__name',
                                                                 'movie',
@@ -161,7 +164,8 @@ def get_sessions_by_duration(duration, date, time, search_term = "", coordinates
     for session in sessions:
         session_object = {'Start date': str(session[0]),
                           'Start time': str(session[1]),
-                          'Ticket link': session[2]}
+                          'Availability': str(session[2]),
+                          'Ticket link': session[3]}
         res[session[-3]] = res.get(session[-3], {})
         res[session[-3]][session[-2]] = {'Length (min)': session[-1], 'sessions': res[session[-3]].get(session[-2], {'sessions':[]})['sessions'] + [session_object]}
     return res
@@ -184,6 +188,7 @@ def next_sessions(search_term="", coordinates=[]):
     sessions = filter_sessions_by_datetime(current_date, current_time, MID_DAY_S, search_term, coordinates).values_list('movie',
                                                                                                                         'start_date',
                                                                                                                         'start_time',
+                                                                                                                        'availability',
                                                                                                                         'purchase_link',
                                                                                                                         'cinema__name')
 
@@ -191,7 +196,8 @@ def next_sessions(search_term="", coordinates=[]):
     for session in sessions:
         session_object = {'Start date': str(session[1]),
                           'Start time': str(session[2]),
-                          'Ticket link' : session[3]}
+                          'Availability': str(session[3]),
+                          'Ticket link' : session[4]}
         res[session[-1]] = res.get(session[-1], {})
         res[session[-1]][session[0]] = {'sessions': res[session[-1]].get(session[0], {'sessions':[]})['sessions'] + [session_object]}
     return res
@@ -280,13 +286,14 @@ def get_sessions_by_movie(date, time, movie, search_term="", coordinates=[]):
     
     sessions = filter_sessions_by_datetime(date, time, MID_DAY_S, search_term, coordinates) \
                 .filter(movie__in=movies_matched) \
-                .values_list('movie', 'start_date', 'start_time', 'purchase_link', 'cinema__name')
+                .values_list('movie', 'start_date', 'start_time', 'availability', 'purchase_link', 'cinema__name')
 
     res = {}
     for session in sessions:
         session_object = {'Start date': str(session[1]),
                           'Start time': str(session[2]),
-                          'Ticket link' : session[3]}
+                          'Availability': str(session[3]),
+                          'Ticket link' : session[4]}
         res[session[-1]] = res.get(session[-1], {})
         res[session[-1]][session[0]] = {'sessions': res[session[-1]].get(session[0], {'sessions':[]})['sessions'] + [session_object]}
     

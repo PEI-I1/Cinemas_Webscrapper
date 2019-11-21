@@ -58,11 +58,31 @@ The API provided by this service allows:
 ![Database model](static/doc/Cinemas_NOS_DB_EN.png)
 
 ### API
-
-* Search for movies in cinema
+<details>
+<summary>Search for cinemas or get the closest ones</summary>
 
 ```http
-GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
+GET /scrapper/cinemas/search?search_term=<>&lat=<>&lon=<>
+```
+
+| Parameter | Type | Description |
+| :--- | :--- | :--- |
+| `search_term` | `string` | **Optional***. Cinema query. |
+| `lat` and `lon` | `float` | **Optional***. User location. |
+
+
+**Note**: When values are given to `lat` and `lon` the returned cinemas are in a maximum distance of 20 km.
+
+------
+</details>
+
+<!---------------------------------------------------->
+
+<details>
+<summary>Search for movies in cinema</summary>
+
+```http
+GET /scrapper/movies/by_cinema?search_term=<>&lat=<>&lon=<>
 ```
 
 | Parameter | Type | Description |
@@ -71,12 +91,15 @@ GET /movies/by_cinema?search_term=<>&lat=<>&lon=<>
 | `lat` and `lon` | `float` | **Optional***. User location. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
-* Search for movies based on genre, producer, cast, synopsis and age restriction
+<details>
+<summary>Search for movies based on genre, producer, cast, synopsis and age restriction</summary>
 
 ```http
-GET /movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
+GET /scrapper/movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
 ```
 
 | Parameter | Type | Description |
@@ -90,21 +113,27 @@ GET /movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
 **Note**: All parameters are optional but at least one of them needs to be provided.
 
 ------
-<!---------------------------------------------------->
+</details>
 
-* Search for upcoming movies
+<!---------------------------------------------------->
+<details>
+<summary>Search for upcoming movies</summary>
 
 ```http
-GET /movies/releases
+GET /scrapper/movies/releases
 ```
 
 ------
+
+</details>
+
 <!---------------------------------------------------->
 
-* Get details of movie
+<details>
+<summary>Get details of movie</summary>
 
 ```http
-GET /movies/details?movie=<>
+GET /scrapper/movies/details?movie=<>
 ```
 
 | Parameter | Type | Description |
@@ -112,12 +141,15 @@ GET /movies/details?movie=<>
 | `movie` | `string` | **Required**. Name of the movie. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
-* Search for sessions of movies under a certain duration
+<details>
+<summary>Search for sessions of movies under a certain duration</summary>
 
 ```http
-GET /sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=<>
+GET /scrapper/sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=<>
 ```
 
 | Parameter | Type | Description |
@@ -129,12 +161,15 @@ GET /sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=
 | `time` | `Hours:Minutes:Seconds` | **Optional** Time. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
-* Search for the next sessions
+<details>
+<summary>Search for the next sessions</summary>
 
 ```http
-GET /sessions/next_sessions?search_term=<>&lat=<>&lon=<>
+GET /scrapper/sessions/next_sessions?search_term=<>&lat=<>&lon=<>
 ```
 
 | Parameter | Type | Description |
@@ -143,12 +178,15 @@ GET /sessions/next_sessions?search_term=<>&lat=<>&lon=<>
 | `lat` and `lon` | `float` | **Optional***. User location. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
-* Search sessions for a given movie
+<details>
+<summary>Search sessions for a given movie</summary>
 
 ```http
-GET /sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
+GET /scrapper/sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
 ```
 
 | Parameter | Type | Description |
@@ -160,12 +198,15 @@ GET /sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&time=<>
 | `time` | `Hours:Minutes:Seconds` | **Optional** Time. |
 
 ------
+</details>
+
 <!---------------------------------------------------->
 
-* Search for sessions by date
+<details>
+<summary>Search for sessions by date</summary>
 
 ```http
-GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&time=<>
+GET /scrapper/sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&start_time=<>&end_time=<>
 ```
 
 | Parameter | Type | Description |
@@ -173,8 +214,12 @@ GET /sessions/by_date?search_term=<>&lat=<>&lon=<>&date=<>&time=<>
 | `search_term` | `string` | **Optional***. Cinema query. |
 | `lat` and `lon` | `float` | **Optional***. User location. |
 | `date` | `Year-Month-Day` | **Optional**. Date. |
-| `time` | `Hours:Minutes:Seconds` | **Optional**. Time. |
+| `start_time` | `Hours:Minutes:Seconds` | **Optional**. Lower time limit for the beginning of the sessions. |
+| `end_time` | `Hours:Minutes:Seconds` | **Optional**. Upper time limit for the beginning of the sessions. |
 
 ------
-***Note**: The methods related to sessions require `search_term` or in alternative `lat` and `lon`, so 
-that the desired or closest cinemas can be obtained.
+</details>
+
+<br/>
+
+***Note**: The methods related to sessions require `search_term` or in alternative `lat` and `lon`, so that the desired or closest cinemas can be obtained.

@@ -1,4 +1,5 @@
 from .common import *
+from celery.schedules import crontab
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -15,4 +16,11 @@ DATABASES = {
     }
 }
 
+# Celery update database task
 
+CELERY_BEAT_SCHEDULE = {
+    'update-database': {
+        'task': 'scrapper.scrapper_utils.updateDatabase',
+        'schedule': timedelta(minutes=60),
+    },
+}

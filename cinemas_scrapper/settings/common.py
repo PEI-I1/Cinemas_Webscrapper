@@ -107,4 +107,13 @@ STATIC_URL = '/static/'
 # Scrapper settings
 NOS_CINEMAS_URL = 'http://cinemas.nos.pt'
 MOVIES_LINK = NOS_CINEMAS_URL + '/pages/cartaz.aspx'
-MAX_DISTANCE = 20
+MAX_DISTANCE = 20# Km
+
+
+# Celery Settings
+CELERY_BROKER_URL = 'redis://localhost:6379'
+CELERY_RESULT_BACKEND = 'redis://localhost'
+CELERY_IMPORT = ('scrapper.request_handler')
+CELERY_TASK_IGNORE_RESULT = True
+CELERY_TIMEZONE = "Europe/Lisbon"
+CELERY_ENABLE_UTC = True

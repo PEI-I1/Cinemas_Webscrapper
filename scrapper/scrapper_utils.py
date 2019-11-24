@@ -9,6 +9,7 @@ from celery import shared_task, task
 from .models import *
 from datetime import datetime
 import billiard as multiprocessing
+from functools import partial
 
 def getMovies():
     r = requests.get(settings.MOVIES_LINK)
@@ -16,10 +17,13 @@ def getMovies():
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
         movies_html = soup.find('ul', {'class': 'drop-list masterBorderColor'})
-        movies = movies_html.find_all('a', {'class': 'list-item'})
-        for movie in movies:
-            m = getMovie(settings.NOS_CINEMAS_URL + movie['href'], False)
-            movies_objects.append(m)
+        movies = [settings.NOS_CINEMAS_URL + movie['href']
+                  for movie in movies_html.find_all('a', {'class': 'list-item'})]
+        # partially apply getMovie
+        getMoviePart = partial(getMovie, debut=False)
+        
+        with multiprocessing.Pool(15) as proc_pool:
+            movies_objects = proc_pool.map(getMoviePart, movies)
 
     else:
         print("Não foi possível obter a lista de filmes")
@@ -136,7 +140,7 @@ def getNextDebuts():
 
 
 def updateSessionsAvailability(date):
-    print('Update started...')
+    print('Updating session information...')
     purchase_links = Session.objects \
                             .filter(start_date__gte=date) \
                             .values_list('purchase_link', flat=True)
@@ -144,7 +148,7 @@ def updateSessionsAvailability(date):
     p = multiprocessing.Pool(processes=15)
     sessions_updated = p.map(getSessionAvailability, purchase_links)
     Session.objects.bulk_update(sessions_updated, ['availability']);
-    print('Update completed!')
+    print('Sessions updated!')
 
 
 def getSessionAvailability(link):
@@ -156,7 +160,6 @@ def getSessionAvailability(link):
     session = Session.objects.get(purchase_link=link)
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
-        #available_seats = soup.find('tfoot').find('div', {'class': 'right'}).find('span', {'class': 'number'}).get_text()
         tmp = soup.find('tfoot')
         if tmp:
             tmp = tmp.find('div', {'class': 'right'})

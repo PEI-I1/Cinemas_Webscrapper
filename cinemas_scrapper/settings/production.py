@@ -1,5 +1,5 @@
 from .common import *
-from celery.schedules import crontab
+from datetime import timedelta
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False

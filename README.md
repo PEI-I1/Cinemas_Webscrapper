@@ -39,9 +39,13 @@ The API provided by this service allows:
 * Install *Docker*
 * Pull *Redis* container:
 `docker pull redis`
+* Create & migrate DB
+```
+./manage.py makemigrations
+./manage.py migrate
+```
 * Import static data:
 `./manage.py loaddata static/cinemas_fixture.json`
-`./manage.py loaddata --database=default_2 static/cinemas_fixture.json`
 * Run *Django* project:
 `./manage.py runserver`
 * Run *Redis* back-end

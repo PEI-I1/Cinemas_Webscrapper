@@ -126,7 +126,7 @@ def getNextDebuts():
     movies_objects = []
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
-        script = soup.find('div', {'id': 'MSOZoneCell_WebPartWPQ1'}).find('script', {'type': 'text/javascript'}).get_text()
+        script = soup.find('div', {'id': 'MSOZoneCell_WebPartWPQ4'}).find('script', {'type': 'text/javascript'}).get_text()
         moviesData = re.findall(r'moviesData = {(.*)};', script)[0]
         movies_json = json.loads('{' + moviesData + '}')
         for movie in movies_json['Estreias']:

@@ -1,5 +1,6 @@
 from .common import *
 from datetime import timedelta
+#from celery.schedules import crontab
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -22,5 +23,7 @@ CELERY_BEAT_SCHEDULE = {
     'update-database': {
         'task': 'scrapper.scrapper_utils.updateDatabase',
         'schedule': timedelta(minutes=60),
+        #'schedule': crontab(hour=12, minute=54, day_of_week=1)
     },
 }
+

@@ -7,8 +7,7 @@ from functools import reduce
 import operator
 from haversine import haversine, Unit
 
-MID_DAY_S = time(12, 0, 0).strftime('%H:%M:%S')
-
+PIVOT_TIME = time(5, 0, 0).strftime('%H:%M:%S')
 
 def haversine_distance(c1, c2):
     """ Calculate the distance between two points on a spherical surface
@@ -120,7 +119,7 @@ def get_sessions_by_date(date, start_time, end_time, search_term="", coordinates
     return res
     
 
-def filter_sessions_by_datetime(date, start_time, end_time, search_term="", coordinates=[]):
+def filter_sessions_by_datetime(date, start_time, end_time=None, search_term="", coordinates=[]):
     """ Filter all sessions taking place after a specific date and time
     in specific cinemas
     :param: date of the sessions to search for
@@ -129,14 +128,26 @@ def filter_sessions_by_datetime(date, start_time, end_time, search_term="", coor
     :param: user location
     """
     cinemas = get_matching_cinemas(search_term, coordinates)
-    sessions = Session.objects \
+    
+
+    if(start_time <= PIVOT_TIME and end_time <= PIVOT_TIME) or (start_time > PIVOT_TIME and end_time > PIVOT_TIME):
+        sessions = Session.objects \
                       .filter(start_date=date,
                               cinema__in=[cinema[0] for cinema in cinemas])
-
-    if((start_time <= MID_DAY_S and end_time <= MID_DAY_S) or
-       (start_time > MID_DAY_S and start_time < "24:00:00" and end_time > MID_DAY_S and end_time < "24:00:00")):
         return sessions.filter(Q(start_time__gte=start_time) & Q(start_time__lte = end_time))
-    elif(start_time < "24:00:00"):
+
+    elif(start_time <= PIVOT_TIME and end_time > PIVOT_TIME):
+        prev_date = (datetime.strptime(date, '%Y-%m-%d') - timedelta(days=1)).strftime('%Y-%m-%d')
+        sessions = Session.objects \
+                          .filter(cinema__in=[cinema[0] for cinema in cinemas])\
+                          .filter((Q(start_date = date) & Q(start_time__lte = end_time)) |
+                                  (Q(start_date = prev_date) & Q(start_time__gte = start_time) & Q(start_time__lte = PIVOT_TIME)))
+        return sessions
+        
+    elif(start_time > PIVOT_TIME and end_time <= PIVOT_TIME):
+        sessions = Session.objects \
+                          .filter(start_date=date,
+                                  cinema__in=[cinema[0] for cinema in cinemas])
         return sessions.filter(Q(start_time__gte=start_time) | Q(start_time__lte = end_time))
 
 
@@ -148,7 +159,7 @@ def get_sessions_by_duration(duration, date, time, search_term = "", coordinates
     :param: query for the cinema
     :param: user location
     """
-    sessions = filter_sessions_by_datetime(date, time, MID_DAY_S, search_term, coordinates)
+    sessions = filter_sessions_by_datetime(date, time, PIVOT_TIME, search_term, coordinates)
     movies_ud = Movie.objects \
                      .filter(length__lte=duration) \
                      .values_list('original_title')
@@ -177,14 +188,9 @@ def next_sessions(search_term="", coordinates=[]):
     """
     now = datetime.today()
     current_time = now.strftime("%H:%M:%S")
-
-    if current_time < '05:00:00': #account for sessions past mid-night
-        take_one_day = timedelta(days = -1)
-        now = now + take_one_day
-    
     current_date = now.strftime("%Y-%m-%d")
-
-    sessions = filter_sessions_by_datetime(current_date, current_time, MID_DAY_S, search_term, coordinates).values_list('movie',
+    end_time = PIVOT_TIME
+    sessions = filter_sessions_by_datetime(current_date, current_time, end_time, search_term, coordinates).values_list('movie',
                                                                                                                         'start_date',
                                                                                                                         'start_time',
                                                                                                                         'availability',
@@ -283,7 +289,7 @@ def get_sessions_by_movie(date, time, movie, search_term="", coordinates=[]):
     movies_matched = Movie.objects \
                           .filter(Q(original_title__icontains=movie) | Q(title_pt__icontains=movie)).values_list('original_title')
     
-    sessions = filter_sessions_by_datetime(date, time, MID_DAY_S, search_term, coordinates) \
+    sessions = filter_sessions_by_datetime(date, time, PIVOT_TIME, search_term, coordinates) \
                 .filter(movie__in=movies_matched) \
                 .values_list('movie', 'start_date', 'start_time', 'availability', 'purchase_link', 'cinema__name')
 

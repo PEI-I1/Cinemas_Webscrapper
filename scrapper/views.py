@@ -89,7 +89,7 @@ def get_sessions_by_movie(request):
         lat = request.GET.get('lat', '')
         lon = request.GET.get('lon', '')
         start_date = request.GET.get('date', datetime.now().strftime('%Y-%m-%d'))
-        start_time = request.GET.get('time', time(5, 0, 0).strftime('%H:%M:%S'))
+        start_time = request.GET.get('time', datetime.now().strftime('%H:%M:%S'))
         if lat and lon:
             sessions_as_json = json.dumps(request_handler.get_sessions_by_movie(date=start_date, time=start_time, movie=movie, coordinates=[float(lat), float(lon)]))
         elif search_term:

@@ -57,9 +57,9 @@ The API provided by this service allows:
 * Build Docker image
 `docker build -t cinemas_scrapper .`
 * Run Docker container
-`docker run -p 8000:8000 -it cinemas_scrapper`
+`docker run -p 5003:8000 -it cinemas_scrapper`
 * Run script
-`./run.sh`
+`./Cinemas_Webscrapper/run.sh`
 
 
 ## Architecture

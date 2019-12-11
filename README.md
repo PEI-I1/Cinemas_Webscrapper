@@ -162,7 +162,7 @@ GET /scrapper/movies/search?genre=<>&cast=<>&producer=<>&synopsis=<>&age=<>
 | `cast` | `string` | **Optional**. Actors names, comma separated. |
 | `producer` | `string` | **Optional**. Producer name. |
 | `synopsis` | `string` | **Optional**. Words to search on the movie synopsis, comma separated. |
-| `age` | `int` | **Optional** Maximum age restriction. |
+| `age` | `int` | **Optional**. Maximum age restriction. |
 
 **Note**: All parameters are optional but at least one of them needs to be provided.
 
@@ -280,8 +280,8 @@ GET /scrapper/sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date
 | `lat` and `lon` | `float` | **Optional***. User location. |
 | `duration` | `int` | **Required**. Maximum value of duration (in minutes). |
 | `date` | `Year-Month-Day` | **Optional**. Date. |
-| `start_time` | `Hours:Minutes:Seconds` | **Optional** Lower time limit for the beginning of the sessions. |
-| `end_time` | `Hours:Minutes:Seconds` | **Optional** Upper time limit for the beginning of the sessions. |
+| `start_time` | `Hours:Minutes:Seconds` | **Optional**. Lower time limit for the beginning of the sessions. |
+| `end_time` | `Hours:Minutes:Seconds` | **Optional**. Upper time limit for the beginning of the sessions. |
 
 📄 **Example of use**
 ```http
@@ -385,8 +385,8 @@ GET /scrapper/sessions/by_movie?search_term=<>&lat=<>&lon=<>&movie=<>&date=<>&st
 | `lat` and `lon` | `float` | **Optional***. User location. |
 | `movie` | `string` | **Required**. Name of the movie. |
 | `date` | `Year-Month-Day` | **Optional**. Date. |
-| `start_time` | `Hours:Minutes:Seconds` | **Optional** Lower time limit for the beginning of the sessions. |
-| `end_time` | `Hours:Minutes:Seconds` | **Optional** Upper time limit for the beginning of the sessions. |
+| `start_time` | `Hours:Minutes:Seconds` | **Optional**. Lower time limit for the beginning of the sessions. |
+| `end_time` | `Hours:Minutes:Seconds` | **Optional**. Upper time limit for the beginning of the sessions. |
 
 📄 **Example of use**
 ```http

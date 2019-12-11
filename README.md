@@ -271,7 +271,7 @@ GET /scrapper/movies/details?movie=Joker
 <summary>Search for sessions of movies under a certain duration</summary>
 
 ```http
-GET /scrapper/sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&time=<>
+GET /scrapper/sessions/by_duration?search_term=<>&lat=<>&lon=<>&duration=<>&date=<>&start_time=<>&end_time=<>
 ```
 
 | Parameter | Type | Description |

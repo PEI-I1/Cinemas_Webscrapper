@@ -6,6 +6,7 @@ from .scrapper_utils import getMovies, getNextDebuts
 from functools import reduce
 import operator
 from haversine import haversine, Unit
+import re
 
 PIVOT_TIME = time(5, 0, 0).strftime('%H:%M:%S')
 
@@ -108,6 +109,7 @@ def get_sessions_by_date(date, start_time, end_time, search_term="", coordinates
                                                                                                              'purchase_link',
                                                                                                              'cinema__name',
                                                                                                              'movie')
+    '''
     res = {}
     for session in sessions:
         session_object = {'Start date': str(session[0]),
@@ -116,6 +118,28 @@ def get_sessions_by_date(date, start_time, end_time, search_term="", coordinates
                           'Ticket link': session[3]}
         res[session[-2]] = res.get(session[-2], {})
         res[session[-2]][session[-1]] = {'sessions': res[session[-2]].get(session[-1], {'sessions':[]})['sessions'] + [session_object]}
+    '''
+    
+    res = {}
+    for session in sessions:
+        session_object = {'Movie': session[-1],
+                          'Start date': str(session[0]),
+                          'Start time': str(session[1]),
+                          'Availability': str(session[2]),
+                          'Ticket link' : session[3]}
+        res[session[-2]] = res.get(session[-2], []) + [session_object]
+
+    for cinema in res:
+        for session in res[cinema]:
+            session['Start time'] = re.sub(r'0([0-9])(:[0-5][0-9]:[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
+
+    for cinema in res:
+        res[cinema] = sorted(res[cinema], key=lambda x: x['Start date'] + x['Start time'])
+
+    for cinema in res:
+        for session in res[cinema]:
+            session['Start time'] = re.sub(r'5([0-9]:[0-5][0-9]:[0-5][0-9])', r'0\g<1>', session['Start time'])
+    
     return res
     
 
@@ -151,7 +175,7 @@ def filter_sessions_by_datetime(date, start_time, end_time=None, search_term="",
         return sessions.filter(Q(start_time__gte=start_time) | Q(start_time__lte = end_time))
 
 
-def get_sessions_by_duration(duration, date, time, search_term = "", coordinates = []):
+def get_sessions_by_duration(duration, date, start_time, end_time, search_term = "", coordinates = []):
     """ Retrieve sessions for movies under the specified duration
     :param: movie duration limit
     :param: date of the sessions to search for
@@ -159,7 +183,7 @@ def get_sessions_by_duration(duration, date, time, search_term = "", coordinates
     :param: query for the cinema
     :param: user location
     """
-    sessions = filter_sessions_by_datetime(date, time, PIVOT_TIME, search_term, coordinates)
+    sessions = filter_sessions_by_datetime(date, start_time, end_time, search_term, coordinates)
     movies_ud = Movie.objects \
                      .filter(length__lte=duration) \
                      .values_list('original_title')
@@ -170,6 +194,7 @@ def get_sessions_by_duration(duration, date, time, search_term = "", coordinates
                                                                 'cinema__name',
                                                                 'movie',
                                                                 'movie__length')
+    '''
     res = {}
     for session in sessions:
         session_object = {'Start date': str(session[0]),
@@ -178,6 +203,29 @@ def get_sessions_by_duration(duration, date, time, search_term = "", coordinates
                           'Ticket link': session[3]}
         res[session[-3]] = res.get(session[-3], {})
         res[session[-3]][session[-2]] = {'Length (min)': session[-1], 'sessions': res[session[-3]].get(session[-2], {'sessions':[]})['sessions'] + [session_object]}
+    '''
+
+    res = {}
+    for session in sessions:
+        session_object = {'Length (min)': session[-1],
+                          'Movie': session[-2],
+                          'Start date': str(session[0]),
+                          'Start time': str(session[1]),
+                          'Availability': str(session[2]),
+                          'Ticket link' : session[3]}
+        res[session[-3]] = res.get(session[-3], []) + [session_object]
+
+    for cinema in res:
+        for session in res[cinema]:
+            session['Start time'] = re.sub(r'0([0-9])(:[0-5][0-9]:[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
+
+    for cinema in res:
+        res[cinema] = sorted(res[cinema], key=lambda x: x['Start date'] + x['Start time'])
+
+    for cinema in res:
+        for session in res[cinema]:
+            session['Start time'] = re.sub(r'5([0-9]:[0-5][0-9]:[0-5][0-9])', r'0\g<1>', session['Start time'])
+    
     return res
     
 
@@ -191,20 +239,32 @@ def next_sessions(search_term="", coordinates=[]):
     current_date = now.strftime("%Y-%m-%d")
     end_time = PIVOT_TIME
     sessions = filter_sessions_by_datetime(current_date, current_time, end_time, search_term, coordinates).values_list('movie',
-                                                                                                                        'start_date',
-                                                                                                                        'start_time',
-                                                                                                                        'availability',
-                                                                                                                        'purchase_link',
-                                                                                                                        'cinema__name')
+                                                                                                                       'start_date',
+                                                                                                                       'start_time',
+                                                                                                                       'availability',
+                                                                                                                       'purchase_link',
+                                                                                                                       'cinema__name')
 
     res = {}
     for session in sessions:
-        session_object = {'Start date': str(session[1]),
+        session_object = {'Movie': session[0],
+                          'Start date': str(session[1]),
                           'Start time': str(session[2]),
                           'Availability': str(session[3]),
                           'Ticket link' : session[4]}
-        res[session[-1]] = res.get(session[-1], {})
-        res[session[-1]][session[0]] = {'sessions': res[session[-1]].get(session[0], {'sessions':[]})['sessions'] + [session_object]}
+        res[session[-1]] = res.get(session[-1], []) + [session_object]
+
+    for cinema in res:
+        for session in res[cinema]:
+            session['Start time'] = re.sub(r'0([0-9])(:[0-5][0-9]:[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
+
+    for cinema in res:
+        res[cinema] = sorted(res[cinema], key=lambda x: x['Start date'] + x['Start time'])
+
+    for cinema in res:
+        for session in res[cinema]:
+            session['Start time'] = re.sub(r'5([0-9]:[0-5][0-9]:[0-5][0-9])', r'0\g<1>', session['Start time'])
+    
     return res
 
 
@@ -278,7 +338,7 @@ def get_movie_details(movie):
     return movies_queryset_to_array(movies, full_description=True)
 
 
-def get_sessions_by_movie(date, time, movie, search_term="", coordinates=[]):
+def get_sessions_by_movie(date, start_time, end_time, movie, search_term="", coordinates=[]):
     """ Get all sessions of a movie in a set of cinemas
     :param: date of the sessions to search for
     :param: minimum start time for the sessions
@@ -289,7 +349,7 @@ def get_sessions_by_movie(date, time, movie, search_term="", coordinates=[]):
     movies_matched = Movie.objects \
                           .filter(Q(original_title__icontains=movie) | Q(title_pt__icontains=movie)).values_list('original_title')
     
-    sessions = filter_sessions_by_datetime(date, time, PIVOT_TIME, search_term, coordinates) \
+    sessions = filter_sessions_by_datetime(date, start_time, end_time, search_term, coordinates) \
                 .filter(movie__in=movies_matched) \
                 .values_list('movie', 'start_date', 'start_time', 'availability', 'purchase_link', 'cinema__name')
 

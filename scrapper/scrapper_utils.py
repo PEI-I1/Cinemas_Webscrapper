@@ -147,7 +147,7 @@ def updateSessionsAvailability(date):
     
     p = multiprocessing.Pool(processes=15)
     sessions_updated = p.map(getSessionAvailability, purchase_links)
-    Session.objects.bulk_update(sessions_updated, ['availability']);
+    Session.objects.bulk_update(sessions_updated, ['availability'])
     print('Sessions updated!')
 
 

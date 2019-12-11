@@ -134,7 +134,7 @@ def search_movies(request):
     producer = request.GET.get('producer', '')
     cast = request.GET.get('cast', '')
     synopsis = request.GET.get('synopsis', '')
-    age = int(request.GET.get('age', '18'))
+    age = request.GET.get('age', '')
     if genre or producer or cast or synopsis or age:
         if cast:
             cast = cast.split(',')
@@ -144,6 +144,9 @@ def search_movies(request):
             synopsis = synopsis.split(',')
         else:
             synopsis = []
+        if not age:
+            age = '18'
+        age = int(age)
         movies_as_json = json.dumps(request_handler.search_movies(genre=genre, producer=producer, cast=cast, synopsis=synopsis, age=age))
     else:
         movies_as_json = json.dumps({'error': 'It needs at least one paramater (Genre, Producer, Cast, Synopsis, Age)'})

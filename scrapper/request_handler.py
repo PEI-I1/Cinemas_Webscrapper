@@ -277,7 +277,7 @@ def movies_queryset_to_array(movies, full_description = False):
         movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'producer',
                                     'synopsis', 'length', 'trailer_url', 'released', 'title_pt', 'age_rating')
     else:
-        movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url')
+        movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'title_pt')
     
     res = []
     for movie in movies:
@@ -285,7 +285,8 @@ def movies_queryset_to_array(movies, full_description = False):
             'Original title': movie[0],
             'Cast': movie[1],
             'Genre': movie[2],
-            'Banner': movie[3]
+            'Banner': movie[3],
+            'Portuguese title': movie[4]
         }
         if full_description:
             movie_object['Producer'] = movie[4]

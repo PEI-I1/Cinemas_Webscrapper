@@ -123,22 +123,22 @@ def get_sessions_by_date(date, start_time, end_time, search_term="", coordinates
     res = {}
     for session in sessions:
         session_object = {'Movie': session[-1],
-                          'Start date': str(session[0]),
-                          'Start time': str(session[1]),
+                          'Start date': formatDate(str(session[0])),
+                          'Start time': formatTime(str(session[1])),
                           'Availability': str(session[2]),
                           'Ticket link' : session[3]}
         res[session[-2]] = res.get(session[-2], []) + [session_object]
 
     for cinema in res:
         for session in res[cinema]:
-            session['Start time'] = re.sub(r'0([0-9])(:[0-5][0-9]:[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
+            session['Start time'] = re.sub(r'0([0-9])(h[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
 
     for cinema in res:
         res[cinema] = sorted(res[cinema], key=lambda x: x['Start date'] + x['Start time'])
 
     for cinema in res:
         for session in res[cinema]:
-            session['Start time'] = re.sub(r'5([0-9]:[0-5][0-9]:[0-5][0-9])', r'0\g<1>', session['Start time'])
+            session['Start time'] = re.sub(r'5([0-9]h[0-5][0-9])', r'0\g<1>', session['Start time'])
     
     return res
     
@@ -209,22 +209,22 @@ def get_sessions_by_duration(duration, date, start_time, end_time, search_term =
     for session in sessions:
         session_object = {'Length (min)': session[-1],
                           'Movie': session[-2],
-                          'Start date': str(session[0]),
-                          'Start time': str(session[1]),
+                          'Start date': formatDate(str(session[0])),
+                          'Start time': formatTime(str(session[1])),
                           'Availability': str(session[2]),
                           'Ticket link' : session[3]}
         res[session[-3]] = res.get(session[-3], []) + [session_object]
 
     for cinema in res:
         for session in res[cinema]:
-            session['Start time'] = re.sub(r'0([0-9])(:[0-5][0-9]:[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
+            session['Start time'] = re.sub(r'0([0-9])(h[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
 
     for cinema in res:
         res[cinema] = sorted(res[cinema], key=lambda x: x['Start date'] + x['Start time'])
 
     for cinema in res:
         for session in res[cinema]:
-            session['Start time'] = re.sub(r'5([0-9]:[0-5][0-9]:[0-5][0-9])', r'0\g<1>', session['Start time'])
+            session['Start time'] = re.sub(r'5([0-9]h[0-5][0-9])', r'0\g<1>', session['Start time'])
     
     return res
     
@@ -248,22 +248,22 @@ def next_sessions(search_term="", coordinates=[]):
     res = {}
     for session in sessions:
         session_object = {'Movie': session[0],
-                          'Start date': str(session[1]),
-                          'Start time': str(session[2]),
+                          'Start date': formatDate(str(session[1])),
+                          'Start time': formatTime(str(session[2])),
                           'Availability': str(session[3]),
                           'Ticket link' : session[4]}
         res[session[-1]] = res.get(session[-1], []) + [session_object]
 
     for cinema in res:
         for session in res[cinema]:
-            session['Start time'] = re.sub(r'0([0-9])(:[0-5][0-9]:[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
+            session['Start time'] = re.sub(r'0([0-9])(h[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
 
     for cinema in res:
         res[cinema] = sorted(res[cinema], key=lambda x: x['Start date'] + x['Start time'])
 
     for cinema in res:
         for session in res[cinema]:
-            session['Start time'] = re.sub(r'5([0-9]:[0-5][0-9]:[0-5][0-9])', r'0\g<1>', session['Start time'])
+            session['Start time'] = re.sub(r'5([0-9]h[0-5][0-9])', r'0\g<1>', session['Start time'])
     
     return res
 
@@ -356,11 +356,40 @@ def get_sessions_by_movie(date, start_time, end_time, movie, search_term="", coo
 
     res = {}
     for session in sessions:
-        session_object = {'Start date': str(session[1]),
-                          'Start time': str(session[2]),
+        session_object = {'Start date': formatDate(str(session[1])),
+                          'Start time': formatTime(str(session[2])),
                           'Availability': str(session[3]),
                           'Ticket link' : session[4]}
+
         res[session[-1]] = res.get(session[-1], {})
         res[session[-1]][session[0]] = {'sessions': res[session[-1]].get(session[0], {'sessions':[]})['sessions'] + [session_object]}
     
+    for cinema in res:
+        for movie in res[cinema]:
+            for session in res[cinema][movie]['sessions']:
+                session['Start time'] = re.sub(r'0([0-9])(h[0-5][0-9])', r'5\g<1>\g<2>', session['Start time'])
+
+    for cinema in res:
+        for movie in res[cinema]:
+            res[cinema][movie]['sessions'] = sorted(res[cinema][movie]['sessions'], key=lambda x: x['Start date'] + x['Start time'])
+
+    for cinema in res:
+        for movie in res[cinema]:
+            for session in res[cinema][movie]['sessions']:
+                session['Start time'] = re.sub(r'5([0-9]h[0-5][0-9])', r'0\g<1>', session['Start time'])
+
     return res
+
+
+def formatDate(date):
+    """ Change format of date string: from 'Y-M-D' to 'D/M/Y'
+    :param: date string
+    """
+    return re.sub(r'([0-9]{4})-([0-9]{2})-([0-9]{2})', r'\g<3>/\g<2>/\g<1>', date)
+
+
+def formatTime(time):
+    """ Change format of time string: from 'H:M:S' to 'HhM'
+    :param: time string
+    """
+    return re.sub(r'([012][0-9]):([0-5][0-9]):[0-5][0-9]', r'\g<1>h\g<2>', time)

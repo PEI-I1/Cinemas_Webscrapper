@@ -239,6 +239,7 @@ def next_sessions(search_term="", coordinates=[]):
     current_date = now.strftime("%Y-%m-%d")
     end_time = PIVOT_TIME
     sessions = filter_sessions_by_datetime(current_date, current_time, end_time, search_term, coordinates).values_list('movie',
+                                                                                                                       'movie__trailer_url',
                                                                                                                        'start_date',
                                                                                                                        'start_time',
                                                                                                                        'availability',
@@ -248,10 +249,11 @@ def next_sessions(search_term="", coordinates=[]):
     res = {}
     for session in sessions:
         session_object = {'Movie': session[0],
-                          'Start date': str(session[1]),
-                          'Start time': str(session[2]),
-                          'Availability': str(session[3]),
-                          'Ticket link' : session[4]}
+                          'Trailer': session[1],
+                          'Start date': str(session[2]),
+                          'Start time': str(session[3]),
+                          'Availability': str(session[4]),
+                          'Ticket link' : session[5]}
         res[session[-1]] = res.get(session[-1], []) + [session_object]
 
     for cinema in res:
@@ -274,10 +276,10 @@ def movies_queryset_to_array(movies, full_description = False):
     :param: indicates whether all the info about a movie should be retrieved
     """
     if full_description:
-        movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'producer',
-                                    'synopsis', 'length', 'trailer_url', 'released', 'title_pt', 'age_rating')
+        movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'trailer_url', 'producer',
+                                    'synopsis', 'length', 'released', 'title_pt', 'age_rating')
     else:
-        movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'title_pt')
+        movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'trailer_url', 'producer')
     
     res = []
     for movie in movies:
@@ -286,13 +288,12 @@ def movies_queryset_to_array(movies, full_description = False):
             'Cast': movie[1],
             'Genre': movie[2],
             'Banner': movie[3],
-            'Portuguese title': movie[4]
+            'Trailer': movie[4],
+            'Producer': movie[5]
         }
         if full_description:
-            movie_object['Producer'] = movie[4]
-            movie_object['Synopsis'] = movie[5]
-            movie_object['Length (min)'] = movie[6]
-            movie_object['Trailer'] = movie[7]
+            movie_object['Synopsis'] = movie[6]
+            movie_object['Length (min)'] = movie[7]
             movie_object['Released'] = movie[8]
             movie_object['Portuguese title'] = movie[9]
             movie_object['Age rating'] = movie[10]

@@ -26,7 +26,7 @@ WORKDIR /home/scrapper
 RUN git clone https://github.com/PEI-I1/Cinemas_Webscrapper.git
 WORKDIR /home/scrapper/Cinemas_Webscrapper
 
-RUN echo 'PATH=$PATH:/home/scrapper/.local/bin' >> ../.bashrc
+ENV PATH="/home/scrapper/.local/bin:${PATH}"
 
 RUN pip install -r requirements.txt --user --no-warn-script-location
 

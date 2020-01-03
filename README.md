@@ -293,25 +293,25 @@ GET /scrapper/sessions/by_duration?search_term=Braga&duration=130&date=2019-12-1
     "Braga Parque": [
         {
             "Availability": "184",
-            "Start time": "15:00:00",
+            "Start time": "15h00",
             "Movie": "Joker",
-            "Start date": "2019-12-11",
+            "Start date": "11/12/2019",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1983870&DataSessao=2019-12-11&HoraSessao=15:00&Sala=5",
             "Length (min)": 122
         },
         {
             "Availability": "160",
-            "Start time": "15:40:00",
+            "Start time": "15h40",
             "Movie": "Charlie’s Angels",
-            "Start date": "2019-12-11",
+            "Start date": "11/12/2019",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1000335&DataSessao=2019-12-11&HoraSessao=15:40&Sala=2",
             "Length (min)": 120
         },
         {
             "Availability": "216",
-            "Start time": "15:50:00",
+            "Start time": "15h50",
             "Movie": "The Aeronauts",
-            "Start date": "2019-12-11",
+            "Start date": "11/12/2019",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1728200&DataSessao=2019-12-11&HoraSessao=15:50&Sala=6",
             "Length (min)": 100
         }
@@ -344,22 +344,22 @@ GET /scrapper/sessions/next_sessions?search_term=Braga
 {
     "Braga Parque": [
         {
-            "Start date": "2019-12-11",
-            "Start time": "23:50:00",
+            "Start date": "11/12/2019",
+            "Start time": "23h50",
             "Movie": "Frozen II",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1733660&DataSessao=2019-12-11&HoraSessao=23:50&Sala=3",
             "Availability": "324"
         },
         {
-            "Start date": "2019-12-11",
-            "Start time": "23:50:00",
+            "Start date": "11/12/2019",
+            "Start time": "23h50",
             "Movie": "Knives Out",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1000338&DataSessao=2019-12-11&HoraSessao=23:50&Sala=7",
             "Availability": "174"
         },
         {
-            "Start date": "2019-12-11",
-            "Start time": "00:05:00",
+            "Start date": "11/12/2019",
+            "Start time": "00h05",
             "Movie": "The Aeronauts",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1728200&DataSessao=2019-12-12&HoraSessao=00:05&Sala=6",
             "Availability": "216"
@@ -399,16 +399,16 @@ GET /scrapper/sessions/by_movie?search_term=Braga&movie=Joker&date=2019-12-11&st
         "Joker": {
             "sessions": [
                 {
-                    "Start time": "18:00:00",
+                    "Start time": "18h00",
                     "Availability": "184",
                     "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1983870&DataSessao=2019-12-11&HoraSessao=18:00&Sala=5",
-                    "Start date": "2019-12-11"
+                    "Start date": "11/12/2019"
                 },
                 {
-                    "Start time": "21:00:00",
+                    "Start time": "21h00",
                     "Availability": "184",
                     "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1983870&DataSessao=2019-12-11&HoraSessao=21:00&Sala=5",
-                    "Start date": "2019-12-11"
+                    "Start date": "11/12/2019"
                 }
             ]
         }
@@ -444,25 +444,25 @@ GET /scrapper/sessions/by_date?search_term=Braga&date=2019-12-11&start_time=16:0
 {
     "Braga Parque": [
         {
-            "Start time": "16:00:00",
+            "Start time": "16h00",
             "Availability": "324",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1984110&DataSessao=2019-12-11&HoraSessao=16:00&Sala=3",
             "Movie": "Frozen II",
-            "Start date": "2019-12-11"
+            "Start date": "11/12/2019"
         },
         {
-            "Start time": "16:10:00",
+            "Start time": "16h10",
             "Availability": "177",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1000350&DataSessao=2019-12-11&HoraSessao=16:10&Sala=4",
             "Movie": "Qu'est-ce qu'on a encore fait au Bon Dieu?",
-            "Start date": "2019-12-11"
+            "Start date": "11/12/2019"
         },
         {
-            "Start time": "16:20:00",
+            "Start time": "16h20",
             "Availability": "107",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1000351&DataSessao=2019-12-11&HoraSessao=16:20&Sala=1",
             "Movie": "Bikes",
-            "Start date": "2019-12-11"
+            "Start date": "11/12/2019"
         }
     ]
 }

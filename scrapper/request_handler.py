@@ -277,9 +277,10 @@ def movies_queryset_to_array(movies, full_description = False):
     """
     if full_description:
         movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'trailer_url', 'producer',
-                                    'synopsis', 'length', 'released', 'title_pt', 'age_rating')
+                                    'imdb_rating', 'synopsis', 'length', 'released', 'title_pt', 'age_rating')
     else:
-        movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'trailer_url', 'producer')
+        movies = movies.values_list('original_title', 'cast', 'genre__name', 'banner_url', 'trailer_url', 'producer',
+                                    'imdb_rating')
     
     res = []
     for movie in movies:
@@ -289,14 +290,15 @@ def movies_queryset_to_array(movies, full_description = False):
             'Genre': movie[2],
             'Banner': movie[3],
             'Trailer': movie[4],
-            'Producer': movie[5]
+            'Producer': movie[5],
+            'IMDB Rating': movie[6]
         }
         if full_description:
-            movie_object['Synopsis'] = movie[6]
-            movie_object['Length (min)'] = movie[7]
-            movie_object['Released'] = movie[8]
-            movie_object['Portuguese title'] = movie[9]
-            movie_object['Age rating'] = movie[10]
+            movie_object['Synopsis'] = movie[7]
+            movie_object['Length (min)'] = movie[8]
+            movie_object['Released'] = movie[9]
+            movie_object['Portuguese title'] = movie[10]
+            movie_object['Age rating'] = movie[11]
         res.append(movie_object)
     return res
 

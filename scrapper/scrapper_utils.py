@@ -59,6 +59,7 @@ def getMovie(movie_link, released):
                  r'Título Original': '',
                  r'Realizador' : '',
                  r'Actores' : '',
+                 r'Ano' : '',
                  r'Duração (minutos)': 0}
 
         for detail in general_descriptions:
@@ -70,7 +71,8 @@ def getMovie(movie_link, released):
         synopsis = re.sub(r'\s+', ' ', synopsis)
 
         schedule_html = soup.find('section', {'class': 'schedule'}).find_all('section', {'class': 'table is-hidden display-none'})
-        
+
+        imdb_rating = getIMDBRating(props[r'Título Original'], props[r'Ano'])
         # Too heavy for testing every time
         if released: 
             schedule = getSchedule(schedule_html)
@@ -89,7 +91,8 @@ def getMovie(movie_link, released):
             'trailer_url': trailer,
             'banner_url': banner,
             'released': released,
-            'sessions': schedule
+            'sessions': schedule,
+            'imdb_rating': imdb_rating
         }
 
         return movie_object
@@ -97,8 +100,25 @@ def getMovie(movie_link, released):
     else:
         print("Não foi possível obter as informações do filme")
 
-def getSchedule(schedule_html):
 
+def getIMDBRating(title, year):
+    ''' Fetch IMDB rating using the original title
+    :param: movie title
+    :param: year of production
+    :return: float corresponding to IMDB rating
+    '''
+    info_url = settings.OMDB_API_URL.format(settings.OMDB_API_KEY, title, year)
+    r = requests.get(info_url)
+    if r.status_code == 200:
+        rating = r.json().get('imdbRating', '0.0')
+        if rating == 'N/A':
+            rating = '0.0'
+    else:
+        rating = '0.0'
+    return float(rating)
+
+
+def getSchedule(schedule_html):
     sessions_objects = []
     
     for day_schedule in schedule_html:
@@ -120,6 +140,7 @@ def getSchedule(schedule_html):
                 sessions_objects.append(session_object)
                 
     return sessions_objects
+
 
 def getNextDebuts():
     r = requests.get(settings.NOS_CINEMAS_URL)
@@ -169,6 +190,7 @@ def getSessionAvailability(link):
                     availability = int(tmp.get_text())
                     session.availability = availability
     return session
+
 
 @task(bind=True)
 def updateDatabase(self):
@@ -222,6 +244,7 @@ def updateMovieSessions():
             trailer_url = movie['trailer_url'],
             banner_url = movie['banner_url'],
             released = movie['released'],
+            imdb_rating = movie['imdb_rating'],
             age_rating = age_rating,
             genre = genre
         )

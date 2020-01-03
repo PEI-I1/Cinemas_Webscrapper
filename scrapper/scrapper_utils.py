@@ -105,17 +105,15 @@ def getIMDBRating(title, year):
     ''' Fetch IMDB rating using the original title
     :param: movie title
     :param: year of production
-    :return: float corresponding to IMDB rating
+    :return: IMDB rating if available
     '''
     info_url = settings.OMDB_API_URL.format(settings.OMDB_API_KEY, title, year)
     r = requests.get(info_url)
     if r.status_code == 200:
-        rating = r.json().get('imdbRating', '0.0')
-        if rating == 'N/A':
-            rating = '0.0'
+        rating = r.json().get('imdbRating', 'N/A')
     else:
-        rating = '0.0'
-    return float(rating)
+        rating = 'N/A'
+    return rating
 
 
 def getSchedule(schedule_html):

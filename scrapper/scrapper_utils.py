@@ -20,7 +20,7 @@ def getMovies():
         movies = [settings.NOS_CINEMAS_URL + movie['href']
                   for movie in movies_html.find_all('a', {'class': 'list-item'})]
         # partially apply getMovie
-        getMoviePart = partial(getMovie, debut=False)
+        getMoviePart = partial(getMovie, released=True)
         
         with multiprocessing.Pool(15) as proc_pool:
             movies_objects = proc_pool.map(getMoviePart, movies)
@@ -30,7 +30,7 @@ def getMovies():
 
     return movies_objects
 
-def getMovie(movie_link, debut):
+def getMovie(movie_link, released):
     r = requests.get(movie_link)
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
@@ -72,7 +72,7 @@ def getMovie(movie_link, debut):
         schedule_html = soup.find('section', {'class': 'schedule'}).find_all('section', {'class': 'table is-hidden display-none'})
         
         # Too heavy for testing every time
-        if not debut: 
+        if released: 
             schedule = getSchedule(schedule_html)
         else:
             schedule = []
@@ -88,7 +88,7 @@ def getMovie(movie_link, debut):
             'synopsis': synopsis,
             'trailer_url': trailer,
             'banner_url': banner,
-            'debut': debut,
+            'released': released,
             'sessions': schedule
         }
 
@@ -130,7 +130,7 @@ def getNextDebuts():
         moviesData = re.findall(r'moviesData = {(.*)};', script)[0]
         movies_json = json.loads('{' + moviesData + '}')
         for movie in movies_json['Estreias']:
-            m = getMovie(settings.NOS_CINEMAS_URL + movie['movieLink'], True)
+            m = getMovie(settings.NOS_CINEMAS_URL + movie['movieLink'], False)
             movies_objects.append(m)
 
     else:
@@ -221,7 +221,7 @@ def updateMovieSessions():
             length = movie['duration'],
             trailer_url = movie['trailer_url'],
             banner_url = movie['banner_url'],
-            released = not movie['debut'],
+            released = movie['released'],
             age_rating = age_rating,
             genre = genre
         )

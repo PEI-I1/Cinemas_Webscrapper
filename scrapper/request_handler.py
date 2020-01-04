@@ -59,7 +59,7 @@ def movies_of_cinemas(cinemas_coordinates):
     for cinema in cinemas:
         movie_titles = list(set(Session.objects \
                                        .filter(cinema=cinema[0]) \
-                                       .values_list('movie', flat=True)))
+                                       .values_list('movie__title_pt', flat=True)))
         res[cinema[1]] = movie_titles
     return res
 

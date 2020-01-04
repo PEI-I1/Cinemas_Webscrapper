@@ -4,7 +4,11 @@ from datetime import timedelta
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['cinemaswebscrapper']
+ALLOWED_HOSTS = [
+    '127.0.0.1',
+    '0.0.0.0',
+    'cinemaswebscrapper'
+]
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases

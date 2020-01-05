@@ -119,28 +119,35 @@ GET /scrapper/movies/by_cinema?search_term=Algarve
 
 ```json
 {
-    "Mar Shopping Algarve": [
-        "Charlie’s Angels",
-        "Le Mans 66'",
-        "Knives Out",
-        "Jumanji: The Next Level",
-        "A Shaun The Sheep Movie: Farmageddon",
-        "Bikes",
-        "21 Bridges",
-        "Frozen II",
-        "Star Wars: Episode IX - The Rise of Skywalker",
-        "The Aeronauts"
-    ],
     "Forum Algarve": [
-        "Charlie’s Angels",
-        "Jumanji: The Next Level",
-        "Knives Out",
-        "A Shaun The Sheep Movie: Farmageddon",
-        "Cats and Peachtopia",
-        "Frozen II",
-        "Qu'est-ce qu'on a encore fait au Bon Dieu?",
-        "Star Wars: Episode IX - The Rise of Skywalker",
-        "The Aeronauts"
+        {
+            "Portuguese title": "A Bela Adormecida 19/20",
+            "IMDB Rating": "N/A"
+        },
+        {
+            "Portuguese title": "A Ovelha Choné - O Filme: A Quinta Contra-Ataca",
+            "IMDB Rating": "7.1"
+        },
+        {
+            "Portuguese title": "O Caso de Richard Jewell",
+            "IMDB Rating": "7.7"
+        },
+        ...
+    ],
+    "Mar Shopping Algarve": [
+        {
+            "Portuguese title": "A Bela Adormecida 19/20",
+            "IMDB Rating": "N/A"
+        },
+        {
+            "Portuguese title": "Line of Duty: O Resgate",
+            "IMDB Rating": "5.1"
+        },
+        {
+            "Portuguese title": "The Grudge: Maldição",
+            "IMDB Rating": "N/A"
+        },
+        ...
     ]
 }
 ```
@@ -173,19 +180,20 @@ GET /scrapper/movies/search?cast=Kevin Hart,Dwayne Johnson
 
 ```json
 [
-    {
-        "Genre": "Aventura",
-        "Producer": "Jake Kasdan",
-        "Portuguese title": "Jumanji: O Nível Seguinte",
-        "Cast": "Dwayne Johnson, Jack Black, Kevin Hart",
-        "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52285.jpg",
-        "Length (min)": 120,
-        "Original title": "Jumanji: The Next Level",
-        "Synopsis": "O gangue está de volta, mas o jogo mudou. Quando regressam a Jumanji para resgatar um deles, descobrem que nada é como estavam à espera. Os jogadores terão de enfrentar lugares desconhecidos e inexplorados, desde os áridos desertos às montanhas nevadas, para escapar do jogo mais perigoso do mundo.",
-        "Released": true,
-        "Age rating": 12,
-        "Trailer": "https://youtube.com/embed/yx9u6IsJrxM"
-    }
+  {
+    "Original title": "Jumanji: The Next Level",
+    "Cast": "Dwayne Johnson, Jack Black, Kevin Hart",
+    "Genre": "Aventura",
+    "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52285.jpg",
+    "Trailer": "https://youtube.com/embed/yx9u6IsJrxM",
+    "Producer": "Jake Kasdan",
+    "IMDB Rating": "7.0",
+    "Synopsis": "O gangue está de volta, mas o jogo mudou. Quando regressam a Jumanji para resgatar um deles, descobrem que nada é como estavam à espera. Os jogadores terão de enfrentar lugares desconhecidos e inexplorados, desde os áridos desertos às montanhas nevadas, para escapar do jogo mais perigoso do mundo.",
+    "Length (min)": 120,
+    "Released": true,
+    "Portuguese title": "Jumanji: O Nível Seguinte",
+    "Age rating": 12
+  }
 ]
 ```
 ------
@@ -203,24 +211,33 @@ GET /scrapper/movies/releases
 
 ```json
 [
-    {
-        "Genre": "Animação",
-        "Original title": "Spies In Disguise",
-        "Cast": "Pedro Bargado, André Raimundo, Carlá de Sá",
-        "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52276.jpg"
-    },
-    {
-        "Genre": "Thriller",
-        "Original title": "Mr. Jones",
-        "Cast": "James Norton, Vanessa Kirby, Peter Sarsgaard",
-        "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52247.jpg"
-    },
-    {
-        "Genre": "Drama",
-        "Original title": "Richard Jewell",
-        "Cast": "Paul Walter Hauser, Sam Rockwell, Olivia Wilde",
-        "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52280.jpg"
-    }
+  {
+    "Original title": "Dark Waters",
+    "Cast": "Mark Ruffalo, Anne Hathaway, William Jackson Harper",
+    "Genre": "Drama",
+    "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52277.jpg",
+    "Trailer": "https://youtube.com/embed/pGcCvkaC8nc",
+    "Producer": "Todd Haynes",
+    "IMDB Rating": "7.3"
+  },
+  {
+    "Original title": "Mulan",
+    "Cast": "Yifei Liu, Donnie Yen, Jason Scott Lee",
+    "Genre": "Aventura",
+    "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52278.jpg",
+    "Trailer": "https://youtube.com/embed/64say-fnG2Y",
+    "Producer": "Niki Caro",
+    "IMDB Rating": "N/A"
+  },
+  {
+    "Original title": "No Time To Die",
+    "Cast": "Daniel Craig, Léa Seydoux, Rami Malek",
+    "Genre": "Ação",
+    "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52279.jpg",
+    "Trailer": "https://youtube.com/embed/o0-kWBe-Kto",
+    "Producer": "Cary Joji Fukunaga",
+    "IMDB Rating": "N/A"
+  }
 ]
 ```
 ------
@@ -248,17 +265,18 @@ GET /scrapper/movies/details?movie=Joker
 ```json
 [
     {
-        "Genre": "Thriller",
-        "Producer": "Todd Phillips",
-        "Portuguese title": "Joker",
-        "Cast": "Joaquin Phoenix, Robert De Niro, Zazie Beetz",
-        "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52161.jpg",
-        "Length (min)": 122,
         "Original title": "Joker",
+        "Cast": "Joaquin Phoenix, Robert De Niro, Zazie Beetz",
+        "Genre": "Thriller",
+        "Banner": "http://cinemas.nos.pt/_layouts/15/Handlers/RenderImage.ashx?file=52161.jpg",
+        "Trailer": "https://youtube.com/embed/rje8OUw45UQ",
+        "Producer": "Todd Phillips",
+        "IMDB Rating": "8.7",
         "Synopsis": "Arthur Fleck é um homem que enfrenta a crueldade e o desprezo da sociedade, juntamente com a indiferença de um sistema que lhe permite passar da vulnerabilidade para a depravação. Durante o dia é um palhaço e à noite luta para se tornar um artista de stand-up comedy…mas descobre que é ele próprio a piada. Sempre diferente de todos em seu redor, o seu riso incontrolável e inapropriado, ganha ainda mais força quando tenta contê-lo, expondo-o a situações ridículas e até à violência. Preso numa existência cíclica que oscila entre o precipício da realidade e da loucura, uma má decisão acarreta uma reacção em cadeia de eventos crescentes e, por fim, mortais.",
+        "Length (min)": 122,
         "Released": true,
-        "Age rating": 14,
-        "Trailer": "https://youtube.com/embed/rje8OUw45UQ"
+        "Portuguese title": "Joker",
+        "Age rating": 14
     }
 ]
 ```

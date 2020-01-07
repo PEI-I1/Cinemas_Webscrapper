@@ -20,7 +20,7 @@ def getMovies():
         movies = [settings.NOS_CINEMAS_URL + movie['href']
                   for movie in movies_html.find_all('a', {'class': 'list-item'})]
         # partially apply getMovie
-        getMoviePart = partial(getMovie, debut=False)
+        getMoviePart = partial(getMovie, released=True)
         
         with multiprocessing.Pool(15) as proc_pool:
             movies_objects = proc_pool.map(getMoviePart, movies)
@@ -30,7 +30,7 @@ def getMovies():
 
     return movies_objects
 
-def getMovie(movie_link, debut):
+def getMovie(movie_link, released):
     r = requests.get(movie_link)
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
@@ -59,6 +59,7 @@ def getMovie(movie_link, debut):
                  r'Título Original': '',
                  r'Realizador' : '',
                  r'Actores' : '',
+                 r'Ano' : '',
                  r'Duração (minutos)': 0}
 
         for detail in general_descriptions:
@@ -70,9 +71,10 @@ def getMovie(movie_link, debut):
         synopsis = re.sub(r'\s+', ' ', synopsis)
 
         schedule_html = soup.find('section', {'class': 'schedule'}).find_all('section', {'class': 'table is-hidden display-none'})
-        
+
+        imdb_rating = getIMDBRating(props[r'Título Original'], props[r'Ano'])
         # Too heavy for testing every time
-        if not debut: 
+        if released: 
             schedule = getSchedule(schedule_html)
         else:
             schedule = []
@@ -88,8 +90,9 @@ def getMovie(movie_link, debut):
             'synopsis': synopsis,
             'trailer_url': trailer,
             'banner_url': banner,
-            'debut': debut,
-            'sessions': schedule
+            'released': released,
+            'sessions': schedule,
+            'imdb_rating': imdb_rating
         }
 
         return movie_object
@@ -97,8 +100,23 @@ def getMovie(movie_link, debut):
     else:
         print("Não foi possível obter as informações do filme")
 
-def getSchedule(schedule_html):
 
+def getIMDBRating(title, year):
+    ''' Fetch IMDB rating using the original title
+    :param: movie title
+    :param: year of production
+    :return: IMDB rating if available
+    '''
+    info_url = settings.OMDB_API_URL.format(settings.OMDB_API_KEY, title, year)
+    r = requests.get(info_url)
+    if r.status_code == 200:
+        rating = r.json().get('imdbRating', 'N/A')
+    else:
+        rating = 'N/A'
+    return rating
+
+
+def getSchedule(schedule_html):
     sessions_objects = []
     
     for day_schedule in schedule_html:
@@ -121,6 +139,7 @@ def getSchedule(schedule_html):
                 
     return sessions_objects
 
+
 def getNextDebuts():
     r = requests.get(settings.NOS_CINEMAS_URL)
     movies_objects = []
@@ -130,7 +149,7 @@ def getNextDebuts():
         moviesData = re.findall(r'moviesData = {(.*)};', script)[0]
         movies_json = json.loads('{' + moviesData + '}')
         for movie in movies_json['Estreias']:
-            m = getMovie(settings.NOS_CINEMAS_URL + movie['movieLink'], True)
+            m = getMovie(settings.NOS_CINEMAS_URL + movie['movieLink'], False)
             movies_objects.append(m)
 
     else:
@@ -169,6 +188,7 @@ def getSessionAvailability(link):
                     availability = int(tmp.get_text())
                     session.availability = availability
     return session
+
 
 @task(bind=True)
 def updateDatabase(self):
@@ -221,7 +241,8 @@ def updateMovieSessions():
             length = movie['duration'],
             trailer_url = movie['trailer_url'],
             banner_url = movie['banner_url'],
-            released = not movie['debut'],
+            released = movie['released'],
+            imdb_rating = movie['imdb_rating'],
             age_rating = age_rating,
             genre = genre
         )

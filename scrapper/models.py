@@ -36,6 +36,7 @@ class Movie(models.Model):
     trailer_url = models.CharField(max_length=128)
     banner_url = models.CharField(max_length=128)
     released = models.BooleanField()
+    imdb_rating = models.CharField(max_length=4)
     age_rating = models.ForeignKey(
         'AgeRating',
         on_delete=models.CASCADE

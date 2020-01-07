@@ -108,7 +108,8 @@ STATIC_URL = '/static/'
 NOS_CINEMAS_URL = 'http://cinemas.nos.pt'
 MOVIES_LINK = NOS_CINEMAS_URL + '/pages/cartaz.aspx'
 MAX_DISTANCE = 20# Km
-
+OMDB_API_URL = 'http://www.omdbapi.com/?apikey={}&t={}&y={}'
+OMDB_API_KEY = '' # REMOVE BEFORE PUSHING
 
 # Celery Settings
 CELERY_BROKER_URL = 'redis://localhost:6379'

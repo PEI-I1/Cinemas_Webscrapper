@@ -23,14 +23,12 @@ USER scrapper
 
 WORKDIR /home/scrapper
 
-RUN git clone https://github.com/PEI-I1/Cinemas_Webscrapper.git
-WORKDIR /home/scrapper/Cinemas_Webscrapper
+COPY --chown=scrapper . Cinemas_Webscraper
+WORKDIR /home/scrapper/Cinemas_Webscraper
 
 ENV PATH="/home/scrapper/.local/bin:${PATH}"
 
 RUN pip install -r requirements.txt --user --no-warn-script-location
-
-WORKDIR /home/scrapper/Cinemas_Webscrapper
 
 CMD ./manage.py makemigrations && \
     ./manage.py migrate && \

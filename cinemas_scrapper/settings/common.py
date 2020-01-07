@@ -112,8 +112,8 @@ OMDB_API_URL = 'http://www.omdbapi.com/?apikey={}&t={}&y={}'
 OMDB_API_KEY = '' # REMOVE BEFORE PUSHING
 
 # Celery Settings
-CELERY_BROKER_URL = 'redis://localhost:6379'
-CELERY_RESULT_BACKEND = 'redis://localhost'
+CELERY_RESULT_BACKEND = 'redis://' + os.getenv('REDIS_HOST', '127.0.0.1')
+CELERY_BROKER_URL = CELERY_RESULT_BACKEND + ':' + os.getenv('REDIS_PORT', '6379')
 CELERY_IMPORT = ('scrapper.request_handler')
 CELERY_TASK_IGNORE_RESULT = True
 CELERY_TIMEZONE = "Europe/Lisbon"

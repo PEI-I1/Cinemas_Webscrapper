@@ -30,4 +30,11 @@ ENV PATH="/home/scrapper/.local/bin:${PATH}"
 
 RUN pip install -r requirements.txt --user --no-warn-script-location
 
-WORKDIR /home/scrapper
+WORKDIR /home/scrapper/Cinemas_Webscrapper
+
+CMD ./manage.py makemigrations && \
+    ./manage.py migrate && \
+    ./manage.py loaddata static/cinemas_fixture.json && \
+    (redis-server &) && \
+    (celery -A cinemas_scrapper.celery worker -B -l info &) && \
+    ./manage.py runserver 0.0.0.0:5003

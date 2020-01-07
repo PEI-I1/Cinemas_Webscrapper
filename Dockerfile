@@ -7,7 +7,6 @@ RUN pacman -Syu --noconfirm && pacman -S --noconfirm \
     git \
     python \
     python-pip \
-    redis \
     sudo \
     unzip \
     wget \
@@ -33,6 +32,5 @@ RUN pip install -r requirements.txt --user --no-warn-script-location
 CMD ./manage.py makemigrations && \
     ./manage.py migrate && \
     ./manage.py loaddata static/cinemas_fixture.json && \
-    (redis-server &) && \
     (celery -A cinemas_scrapper.celery worker -B -l info &) && \
     ./manage.py runserver 0.0.0.0:5003

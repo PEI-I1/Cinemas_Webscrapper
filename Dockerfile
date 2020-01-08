@@ -4,7 +4,6 @@ MAINTAINER PEI-i1
 RUN pacman -Syu --noconfirm && pacman -S --noconfirm \
     bc \
     curl \
-    git \
     python \
     python-pip \
     sudo \

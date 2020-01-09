@@ -33,7 +33,7 @@ The API provided by this service allows:
 
 
 ## Usage
-#### Development Setup
+### Development Setup
 * Install *Django* dependencies:
 `pip install -r requirements.txt --user`
 * Install *Docker*

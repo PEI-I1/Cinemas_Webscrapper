@@ -32,4 +32,4 @@ CMD ./manage.py makemigrations && \
     ./manage.py migrate && \
     ./manage.py loaddata static/cinemas_fixture.json && \
     (celery -A cinemas_scrapper.celery worker -B -l info &) && \
-    ./manage.py runserver 0.0.0.0:5003
+    ./manage.py runserver 0.0.0.0:5003 --noreload

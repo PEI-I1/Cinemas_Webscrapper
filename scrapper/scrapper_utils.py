@@ -160,23 +160,22 @@ def getNextDebuts():
 
 def updateSessionsAvailability(date):
     print('Updating session information...')
-    purchase_links = Session.objects \
+    sessions = Session.objects \
                             .filter(start_date__gte=date) \
-                            .values_list('purchase_link', flat=True)
+                            .all()
     
     p = multiprocessing.Pool(processes=15)
-    sessions_updated = p.map(getSessionAvailability, purchase_links)
+    sessions_updated = p.map(getSessionAvailability, sessions)
     Session.objects.bulk_update(sessions_updated, ['availability'])
     print('Sessions updated!')
 
 
-def getSessionAvailability(link):
+def getSessionAvailability(session):
     """ Get number of available seats for a given session
     :param: Link to purchase ticket for a session
     :return: number of available seats
     """
-    r = requests.get(link)
-    session = Session.objects.get(purchase_link=link)
+    r = requests.get(session.purchase_link)
     if (r.status_code == 200):
         soup = BeautifulSoup(r.text, 'html5lib')
         tmp = soup.find('tfoot')
@@ -200,6 +199,12 @@ def updateDatabase(self):
         updateMovieSessions()
     updateSessionsAvailability(date)
         
+def updateDatabaseStartup():
+    updateMovieSessions()
+
+    today = datetime.today()
+    date = today.strftime("%Y-%m-%d")
+    updateSessionsAvailability(date)
                     
 def updateMovieSessions():
     """ Fetch the latest session and movie info to update the database
@@ -271,5 +276,5 @@ def updateMovieSessions():
     Session.objects.all().delete()
     Movie.objects.all().delete()
     Movie.objects.bulk_create(movies_array, ignore_conflicts=True)
-    Session.objects.bulk_create(sessions_array, ignore_conflicts=True)
+    Session.objects.bulk_create(sessions_array)
     print("Update complete")

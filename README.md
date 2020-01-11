@@ -47,7 +47,7 @@ The API provided by this service allows:
 * Import static data:
 `./manage.py loaddata static/cinemas_fixture.json`
 * Run *Django* project:
-`./manage.py runserver`
+`./manage.py runserver --noreload`
 * Run *Redis* back-end
 `docker run -p 6379:6379 redis`
 * Run *Celery* (for periodic database update):

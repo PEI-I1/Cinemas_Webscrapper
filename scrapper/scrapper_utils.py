@@ -27,6 +27,7 @@ def getMovies():
 
     else:
         print("Não foi possível obter a lista de filmes")
+        raise Exception(f"GET {settings.MOVIES_LINK} returned unexpected response code: {r.status_code}")
 
     return movies_objects
 
@@ -99,7 +100,7 @@ def getMovie(movie_link, released):
 
     else:
         print("Não foi possível obter as informações do filme")
-
+        raise Exception(f"GET {movie_link} returned unexpected response code: {r.status_code}")
 
 def getIMDBRating(title, year):
     ''' Fetch IMDB rating using the original title
@@ -154,6 +155,7 @@ def getNextDebuts():
 
     else:
         print("Não foi possível obter a lista de próximas estreias")
+        raise Exception(f"GET {settings.NOS_CINEMAS_URL} returned unexpected response code: {r.status_code}")
 
     return movies_objects
 
@@ -189,7 +191,7 @@ def getSessionAvailability(session):
     return session
 
 
-@task(bind=True)
+@task(bind=True, autoretry_for=(Exception,), retry_kwargs={'max_retries': 3, 'countdown': 5})
 def updateDatabase(self):
     today = datetime.today()
     time = today.strftime("%H:%M:%S")

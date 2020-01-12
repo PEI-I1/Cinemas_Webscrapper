@@ -109,7 +109,7 @@ NOS_CINEMAS_URL = 'http://cinemas.nos.pt'
 MOVIES_LINK = NOS_CINEMAS_URL + '/pages/cartaz.aspx'
 MAX_DISTANCE = 20# Km
 OMDB_API_URL = 'http://www.omdbapi.com/?apikey={}&t={}&y={}'
-OMDB_API_KEY = '' # REMOVE BEFORE PUSHING
+OMDB_API_KEY = os.getenv('OMDB_TOKEN','') # REMOVE BEFORE PUSHING
 
 # Celery Settings
 CELERY_RESULT_BACKEND = 'redis://' + os.getenv('REDIS_HOST', '127.0.0.1')

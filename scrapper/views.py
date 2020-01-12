@@ -47,7 +47,12 @@ def get_sessions_by_duration(request):
         lat = request.GET.get('lat', '')
         lon = request.GET.get('lon', '')
         start_date = request.GET.get('date', datetime.now().strftime('%Y-%m-%d'))
-        start_time = request.GET.get('start_time', datetime.now().strftime('%H:%M:%S'))
+        start_time = request.GET.get('start_time', '')
+        if not start_time:
+            if start_date == datetime.now().strftime('%Y-%m-%d'): # today
+                start_time = datetime.now().strftime('%H:%M:%S')
+            else:
+                start_time = time(12, 0, 0).strftime('%H:%M:%S')
         end_time = request.GET.get('end_time', time(5, 0, 0).strftime('%H:%M:%S'))
         if lat and lon:
             sessions_as_json = json.dumps(request_handler.get_sessions_by_duration(date=start_date,
@@ -92,7 +97,12 @@ def get_sessions_by_movie(request):
         lat = request.GET.get('lat', '')
         lon = request.GET.get('lon', '')
         start_date = request.GET.get('date', datetime.now().strftime('%Y-%m-%d'))
-        start_time = request.GET.get('start_time', datetime.now().strftime('%H:%M:%S'))
+        start_time = request.GET.get('start_time', '')
+        if not start_time:
+            if start_date == datetime.now().strftime('%Y-%m-%d'): # today
+                start_time = datetime.now().strftime('%H:%M:%S')
+            else:
+                start_time = time(12, 0, 0).strftime('%H:%M:%S')
         end_time = request.GET.get('end_time', time(5, 0, 0).strftime('%H:%M:%S'))
         if lat and lon:
             sessions_as_json = json.dumps(request_handler.get_sessions_by_movie(date=start_date, start_time=start_time, end_time=end_time, movie=movie, coordinates=[float(lat), float(lon)]))
@@ -110,7 +120,12 @@ def get_sessions_by_date(request):
     lat = request.GET.get('lat', '')
     lon = request.GET.get('lon', '')
     start_date = request.GET.get('date', datetime.now().strftime('%Y-%m-%d'))
-    start_time = request.GET.get('start_time', datetime.now().strftime('%H:%M:%S'))
+    start_time = request.GET.get('start_time', '')
+    if not start_time:
+        if start_date == datetime.now().strftime('%Y-%m-%d'): # today
+            start_time = datetime.now().strftime('%H:%M:%S')
+        else:
+            start_time = time(12, 0, 0).strftime('%H:%M:%S')
     end_time = request.GET.get('end_time', time(5, 0, 0).strftime('%H:%M:%S'))
     if lat and lon:
         sessions_as_json = json.dumps(request_handler.get_sessions_by_date(date=start_date,

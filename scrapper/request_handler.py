@@ -315,7 +315,6 @@ def search_movies(genre, producer, cast, synopsis, age):
     :param: age limit requested by the costumer
     '''
     movies = Movie.objects.filter(
-        genre__name__icontains=genre,
         producer__icontains=producer,
         age_rating_id__lte=age
     )
@@ -325,6 +324,12 @@ def search_movies(genre, producer, cast, synopsis, age):
     
     if synopsis != []:
         movies = movies.filter(reduce(operator.and_, (Q(synopsis__icontains=term) for term in synopsis)))
+
+    if genre:
+        movies_aux = movies.filter(genre__name=genre)
+        if not movies_aux:
+            movies_aux = movies.filter(genre__name__icontains=genre)
+        movies = movies_aux
 
     return movies_queryset_to_array(movies, full_description=True)
 

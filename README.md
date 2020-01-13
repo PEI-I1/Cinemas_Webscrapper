@@ -367,6 +367,7 @@ GET /scrapper/sessions/next_sessions?search_term=Braga
             "Start date": "11/12/2019",
             "Start time": "23h50",
             "Movie": "Frozen II",
+            "Trailer": "https://youtube.com/embed/dXle-FdBOtA",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1733660&DataSessao=2019-12-11&HoraSessao=23:50&Sala=3",
             "Availability": "324"
         },
@@ -374,13 +375,15 @@ GET /scrapper/sessions/next_sessions?search_term=Braga
             "Start date": "11/12/2019",
             "Start time": "23h50",
             "Movie": "Knives Out",
+            "Trailer": "https://youtube.com/embed/CqOXel8ohzA",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1000338&DataSessao=2019-12-11&HoraSessao=23:50&Sala=7",
             "Availability": "174"
         },
         {
             "Start date": "11/12/2019",
             "Start time": "00h05",
-            "Movie": "The Aeronauts",
+            "Movie": "Jumanji: The Next Level",
+            "Trailer": "https://youtube.com/embed/yx9u6IsJrxM",
             "Ticket link": "https://bilheteira.cinemas.nos.pt/webticket/bilhete.jsp?CinemaId=WA&CodFilme=1728200&DataSessao=2019-12-12&HoraSessao=00:05&Sala=6",
             "Availability": "216"
         }

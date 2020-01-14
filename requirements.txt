@@ -1,8 +1,8 @@
-djangorestframework
-django
-requests
-bs4
-html5lib
-haversine
-celery
-redis
+djangorestframework==3.11.0
+django==3.0
+requests==2.22.0
+bs4==0.0.1
+html5lib==1.0.1
+haversine==2.1.2
+celery==4.3.0
+redis==3.3.11

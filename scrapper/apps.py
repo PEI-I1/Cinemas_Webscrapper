@@ -1,5 +1,5 @@
 from django.apps import AppConfig
-import sys
+import sys, os
 
 class ScrapperConfig(AppConfig):
     name = 'scrapper'
@@ -7,5 +7,6 @@ class ScrapperConfig(AppConfig):
     def ready(self):
         if ("manage.py" in sys.argv or "./manage.py" in sys.argv) and \
           "runserver" in sys.argv:
-            from .scrapper_utils import updateDatabaseStartup
-            updateDatabaseStartup()
+            if os.getenv('INITIAL_UPDATE', 'true') == 'true':
+                from .scrapper_utils import updateDatabaseStartup
+                updateDatabaseStartup()

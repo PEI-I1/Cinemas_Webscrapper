@@ -5,10 +5,12 @@ from datetime import datetime, date, time, timedelta
 from .scrapper_utils import getMovies, getNextDebuts
 from functools import reduce
 import operator
+from geopy.geocoders import Nominatim
 from haversine import haversine, Unit
 import re
 
 PIVOT_TIME = time(5, 0, 0).strftime('%H:%M:%S')
+geolocator = Nominatim()
 
 def haversine_distance(c1, c2):
     ''' Calculate the distance between two points on a spherical surface
@@ -26,11 +28,21 @@ def closest_cinemas(coordinates=[]):
     '''
     cinemas = Cinema.objects.all()
     closest_cinemas = []
+    min_dist = 100000
+    closest = None
+
     for cinema in cinemas:
         cinema_coordinates = cinema.coordinates.strip().split(',', 1)
         distance = haversine_distance((coordinates[0],coordinates[1]),(float(cinema_coordinates[0]),float(cinema_coordinates[1])))
         if  distance < settings.MAX_DISTANCE:
             closest_cinemas.append((cinema.coordinates, cinema.name))
+        if distance < min_dist and distance >= settings.MAX_DISTANCE:
+            closest = (cinema.coordinates, cinema.name)
+            min_dist = distance
+
+    if not(closest_cinemas) and closest:
+        closest_cinemas = [closest]
+
     return closest_cinemas
 
 
@@ -40,10 +52,21 @@ def find_cinemas(search_term=""):
     '''
     cinemas = Cinema.objects.all()
     cinemas_response = []
+
     for cinema in cinemas:
         st = search_term.lower()
         if st in cinema.name.lower() or st in cinema.alt_name.lower() or st in cinema.city.lower():
             cinemas_response.append((cinema.coordinates, cinema.name))
+
+    if not(cinemas_response):
+        try:
+            addr_raw = geolocator.geocode("Portugal, " + search_term)
+            if addr_raw:
+                coordinates = [addr_raw.latitude, addr_raw.longitude]
+                cinemas_response = closest_cinemas(coordinates)
+        except:
+            pass
+
     return cinemas_response
 
 
@@ -112,16 +135,6 @@ def get_sessions_by_date(date, start_time, end_time, search_term="", coordinates
                                                                                                              'purchase_link',
                                                                                                              'cinema__name',
                                                                                                              'movie')
-    '''
-    res = {}
-    for session in sessions:
-        session_object = {'Start date': str(session[0]),
-                          'Start time': str(session[1]),
-                          'Availability': str(session[2]),
-                          'Ticket link': session[3]}
-        res[session[-2]] = res.get(session[-2], {})
-        res[session[-2]][session[-1]] = {'sessions': res[session[-2]].get(session[-1], {'sessions':[]})['sessions'] + [session_object]}
-    '''
     
     res = {}
     for session in sessions:
@@ -197,16 +210,6 @@ def get_sessions_by_duration(duration, date, start_time, end_time, search_term =
                                                                 'cinema__name',
                                                                 'movie',
                                                                 'movie__length')
-    '''
-    res = {}
-    for session in sessions:
-        session_object = {'Start date': str(session[0]),
-                          'Start time': str(session[1]),
-                          'Availability': str(session[2]),
-                          'Ticket link': session[3]}
-        res[session[-3]] = res.get(session[-3], {})
-        res[session[-3]][session[-2]] = {'Length (min)': session[-1], 'sessions': res[session[-3]].get(session[-2], {'sessions':[]})['sessions'] + [session_object]}
-    '''
 
     res = {}
     for session in sessions:

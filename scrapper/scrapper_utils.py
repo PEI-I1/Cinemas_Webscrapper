@@ -35,7 +35,7 @@ def getMovies():
         print("[getMovies] Não foi possível obter a lista de filmes")
         raise Exception(f"GET {settings.MOVIES_LINK} returned unexpected response code: {r.status_code}")
 
-    return movies_objects
+    return list(filter(lambda x: x != None, movies_objects))
 
 def getMovie(movie_link, released):
     ''' Get all information related to a movie

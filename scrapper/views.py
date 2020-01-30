@@ -152,11 +152,11 @@ def search_movies(request):
     age = request.GET.get('age', '')
     if genre or producer or cast or synopsis or age:
         if cast:
-            cast = cast.split(',')
+            cast = [x.strip() for x in cast.split(',')]
         else:
             cast = []
         if synopsis:
-            synopsis = synopsis.split(',')
+            synopsis = [x.strip() for x in synopsis.split(',')]
         else:
             synopsis = []
         if not age:
